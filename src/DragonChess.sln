@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonLibrary", "CommonLibrary\CommonLibrary.csproj", "{A100E870-0613-4477-B2B7-4FB9DF0A7F37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DragonChessUI", "DragonChessUI\DragonChessUI.csproj", "{5545D2E3-D0DB-479F-B167-108DBBB80B10}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A100E870-0613-4477-B2B7-4FB9DF0A7F37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A100E870-0613-4477-B2B7-4FB9DF0A7F37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A100E870-0613-4477-B2B7-4FB9DF0A7F37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A100E870-0613-4477-B2B7-4FB9DF0A7F37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5545D2E3-D0DB-479F-B167-108DBBB80B10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5545D2E3-D0DB-479F-B167-108DBBB80B10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5545D2E3-D0DB-479F-B167-108DBBB80B10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5545D2E3-D0DB-479F-B167-108DBBB80B10}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
