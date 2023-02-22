@@ -63,6 +63,11 @@ main {
         z-index: 1;
     }
 
+    .px-4 { /* TODO: apply only to chess page or the canvasHolder div */
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
     .top-row, article {
         padding-left: 2rem !important;
         padding-right: 1.5rem !important;

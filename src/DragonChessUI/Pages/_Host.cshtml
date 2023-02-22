@@ -30,5 +30,29 @@
 </div>
 
 <script src="_framework/blazor.server.js"></script>
+<script src="_content/Blazor.Extensions.Canvas/blazor.extensions.canvas.js"></script>
+<script>
+    function getDivCanvasOffsets(el) {
+        let obj = {};
+        obj.offsetLeft = el.offsetLeft;
+        obj.offsetTop = el.offsetTop;
+        return JSON.stringify(obj);
+    }
+    function resizeCanvas() {
+        let holder = document.getElementById('canvasHolder');
+        let canvas = holder.querySelector('canvas');
+        if (canvas) {
+            canvas.width = window.innerWidth - canvas.offsetLeft;
+            canvas.height = window.innerHeight - canvas.offsetTop - 7;
+            theInstance.invokeMethodAsync('ResizeInBlazor', canvas.width, canvas.height);
+        }
+    }
+
+    window.initRenderJS = (instance) => {
+        window.theInstance = instance;
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+    };
+</script>
 </body>
 </html>
