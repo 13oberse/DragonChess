@@ -1,57 +1,59 @@
-﻿namespace DragonChess.Piece
-{
-    public class ChessPos
-    {
-        public int x;
-        public int y;
-        public int z;
+﻿using System.Collections.Generic;
 
-        public ChessPos(int x, int y, int z)
+namespace DragonChess.Piece
+{
+    public class Position
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Z { get; set; }
+
+        public Position(int x, int y, int z)
         {
-            this.x = x;
-            this.y = y;
-            this.z = z;
+            this.X = x;
+            this.Y = y;
+            this.Z = z;
         }
 
-        public void CopyPos(ChessPos pos)
+        public void CopyPos(Position pos)
         {
-            this.x = pos.x;
-            this.y = pos.y;
-            this.z = pos.z;
+            this.X = pos.X;
+            this.Y = pos.Y;
+            this.Z = pos.Z;
         }
 
         public void NewPos(int x, int y, int z)
         {
-            this.x = x;
-            this.y = y;
-            this.z = z;
+            this.X = x;
+            this.Y = y;
+            this.Z = z;
         }
     }
 
     public abstract class ChessPiece
     {
-        public bool owner;
-        public bool immobile;
-        public ChessPos pos;
-        public ChessPos lastPos;
+        protected bool immobile;
+        public Position Position { get; set; }
+        protected Position LastPosition { get; set; }
+        public bool Owner { get; set; }
         // TODO: some indicator for image source?
 
-        public ChessPiece(bool white, int x, int y, int z)
+        protected ChessPiece(bool white, int x, int y, int z)
         {
-            pos = new ChessPos(x, y, z);
-            lastPos = new ChessPos(x, y, z);
-            owner = white;
+            Position = new Position(x, y, z);
+            LastPosition = new Position(x, y, z);
+            Owner = white;
         }
 
-        public abstract List<ChessPos> ValidMoves();
-        public virtual List<ChessPos> RemoteCaptures()
+        public abstract List<Position> ValidMoves();
+        public virtual List<Position> RemoteCaptures()
         {
-            return new List<ChessPos>();
+            return new List<Position>();
         }
         public virtual void MoveTo(int x, int y, int z)
         {
-            lastPos.CopyPos(pos);
-            pos.NewPos(x, y, z);
+            LastPosition.CopyPos(Position);
+            Position.NewPos(x, y, z);
         }
     }
 
@@ -67,23 +69,23 @@
     {
         public Sylph(bool white, int x, int y, int z) : base(white, x, y, z) { }
 
-        public override List<ChessPos> ValidMoves()
+        public override List<Position> ValidMoves()
         {
-            List<ChessPos> moves = new();
+            List<Position> moves = new();
             if (this.immobile)
             {
                 return moves;
             }
 
-            if (this.pos.z == 1)
+            if (this.Position.Z == 1)
             {
                 if (/*space above is unoccupied (not null)*/true)
                 {
-                    moves.Add(new ChessPos(this.pos.x, this.pos.y, 2));
+                    moves.Add(new Position(this.Position.X, this.Position.Y, 2));
                 }
                 /*similarly check the starting sylph positions*/
             }
-            else if (this.pos.z == 2)
+            else if (this.Position.Z == 2)
             {
 
             }
@@ -105,9 +107,9 @@
     {
         public Griffon(bool white, int x, int y, int z) : base(white, x, y, z) { }
 
-        public override List<ChessPos> ValidMoves()
+        public override List<Position> ValidMoves()
         {
-            List<ChessPos> moves = new();
+            List<Position> moves = new();
             if (this.immobile)
             {
                 return moves;
@@ -126,9 +128,9 @@
     {
         public Dragon(bool white, int x, int y, int z) : base(white, x, y, z) { }
 
-        public override List<ChessPos> ValidMoves()
+        public override List<Position> ValidMoves()
         {
-            List<ChessPos> moves = new();
+            List<Position> moves = new();
             if (this.immobile)
             {
                 return moves;
@@ -136,9 +138,9 @@
             return moves;
         }
 
-        public override List<ChessPos> RemoteCaptures()
+        public override List<Position> RemoteCaptures()
         {
-            List<ChessPos> moves = new List<ChessPos>();
+            List<Position> moves = new List<Position>();
             if (this.immobile)
             {
                 return moves;
@@ -157,9 +159,9 @@
     {
         public Warrior(bool white, int x, int y, int z) : base(white, x, y, z) { }
 
-        public override List<ChessPos> ValidMoves()
+        public override List<Position> ValidMoves()
         {
-            List<ChessPos> moves = new();
+            List<Position> moves = new();
             if (this.immobile)
             {
                 return moves;
@@ -175,9 +177,9 @@
     {
         public Oliphant(bool white, int x, int y, int z) : base(white, x, y, z) { }
 
-        public override List<ChessPos> ValidMoves()
+        public override List<Position> ValidMoves()
         {
-            List<ChessPos> moves = new();
+            List<Position> moves = new();
             if (this.immobile)
             {
                 return moves;
@@ -193,9 +195,9 @@
     {
         public Unicorn(bool white, int x, int y, int z) : base(white, x, y, z) { }
 
-        public override List<ChessPos> ValidMoves()
+        public override List<Position> ValidMoves()
         {
-            List<ChessPos> moves = new();
+            List<Position> moves = new();
             if (this.immobile)
             {
                 return moves;
@@ -213,9 +215,9 @@
     {
         public Hero(bool white, int x, int y, int z) : base(white, x, y, z) { }
 
-        public override List<ChessPos> ValidMoves()
+        public override List<Position> ValidMoves()
         {
-            List<ChessPos> moves = new();
+            List<Position> moves = new();
             if (this.immobile)
             {
                 return moves;
@@ -231,9 +233,9 @@
     {
         public Thief(bool white, int x, int y, int z) : base(white, x, y, z) { }
 
-        public override List<ChessPos> ValidMoves()
+        public override List<Position> ValidMoves()
         {
-            List<ChessPos> moves = new();
+            List<Position> moves = new();
             if (this.immobile)
             {
                 return moves;
@@ -251,9 +253,9 @@
     {
         public Cleric(bool white, int x, int y, int z) : base(white, x, y, z) { }
 
-        public override List<ChessPos> ValidMoves()
+        public override List<Position> ValidMoves()
         {
-            List<ChessPos> moves = new();
+            List<Position> moves = new();
             if (this.immobile)
             {
                 return moves;
@@ -272,9 +274,9 @@
     {
         public Mage(bool white, int x, int y, int z) : base(white, x, y, z) { }
 
-        public override List<ChessPos> ValidMoves()
+        public override List<Position> ValidMoves()
         {
-            List<ChessPos> moves = new();
+            List<Position> moves = new();
             if (this.immobile)
             {
                 return moves;
@@ -292,9 +294,9 @@
     {
         public King(bool white, int x, int y, int z) : base(white, x, y, z) { }
 
-        public override List<ChessPos> ValidMoves()
+        public override List<Position> ValidMoves()
         {
-            List<ChessPos> moves = new();
+            List<Position> moves = new();
             if (this.immobile)
             {
                 return moves;
@@ -314,9 +316,9 @@
     {
         public Paladin(bool white, int x, int y, int z) : base(white, x, y, z) { }
 
-        public override List<ChessPos> ValidMoves()
+        public override List<Position> ValidMoves()
         {
-            List<ChessPos> moves = new();
+            List<Position> moves = new();
             if (this.immobile)
             {
                 return moves;
@@ -337,9 +339,9 @@
     {
         public Dwarf(bool white, int x, int y, int z) : base(white, x, y, z) { }
 
-        public override List<ChessPos> ValidMoves()
+        public override List<Position> ValidMoves()
         {
-            List<ChessPos> moves = new();
+            List<Position> moves = new();
             if (this.immobile)
             {
                 return moves;
@@ -359,9 +361,9 @@
     {
         public Basilisk(bool white, int x, int y, int z) : base(white, x, y, z) { }
 
-        public override List<ChessPos> ValidMoves()
+        public override List<Position> ValidMoves()
         {
-            List<ChessPos> moves = new();
+            List<Position> moves = new();
             if (this.immobile)
             {
                 return moves;
@@ -372,8 +374,8 @@
         public override void MoveTo(int x, int y, int z)
         {
             // TODO: immobilize/remobilize pieces
-            lastPos.CopyPos(pos);
-            pos.NewPos(x, y, z);
+            LastPosition.CopyPos(Position);
+            Position.NewPos(x, y, z);
         }
     }
 
@@ -387,9 +389,9 @@
     {
         public Elemental(bool white, int x, int y, int z) : base(white, x, y, z) { }
 
-        public override List<ChessPos> ValidMoves()
+        public override List<Position> ValidMoves()
         {
-            List<ChessPos> moves = new();
+            List<Position> moves = new();
             return moves;
         }
     }
