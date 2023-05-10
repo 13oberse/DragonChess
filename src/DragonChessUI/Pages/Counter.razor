@@ -37,6 +37,11 @@
     long gridOffset = 200; // Offset (in pixels) between grids
     int PPS = 60;       // Pixels per grid square
 
+    // Game variables
+    static ChessPiece?[,,] gameBoard = new ChessPiece[gridW, gridH, numGrids];
+    static int turnPlayerUID;
+    //static int otherPlayerUID; // I assume this will be needed
+
     ElementReference image1;
     ElementReference image2;
     ElementReference image3;
