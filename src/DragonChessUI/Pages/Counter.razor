@@ -2,55 +2,55 @@
 @using Blazor.Extensions
 @using Blazor.Extensions.Canvas
 @using Blazor.Extensions.Canvas.Canvas2D
-@using Newtonsoft.Json
 @using Newtonsoft.Json.Linq
+@using Newtonsoft.Json
 @inject IJSRuntime jsRuntime
 
 <PageTitle>Counter</PageTitle>
 
 <!-- Hidden images to render later -->
-<img @ref="image1" hidden id="image1" src="assets/Italic_D.svg" />
-<img @ref="image2" hidden id="image2" src="assets/image2.png" />
-<img @ref="image3" hidden id="image3" src="assets/image3.png" />
+<img @ref="image1" hidden id="image1" src="assets/Italic_D.svg"/>
+<img @ref="image2" hidden id="image2" src="assets/image2.png"/>
+<img @ref="image3" hidden id="image3" src="assets/image3.png"/>
 
 <div class="canvasHolder" id="canvasHolder" @ref="divCanvas" @onclick="OnCanvasClick">
-    <BECanvas @ref="myCanvas" Height=@canH Width=@canW></BECanvas>
+    <BECanvas @ref="myCanvas" Height="@canH" Width="@canW"></BECanvas>
 </div>
 
 @code {
     ElementReference divCanvas;
-    Blazor.Extensions.BECanvasComponent? myCanvas;
+    BECanvasComponent? myCanvas;
     Canvas2DContext? ctx;
     // Constants
-    const long minH = 200;     // Sample minimum height/width (unused currently)
-    const long minW = 300;
-    const int padding = 5;     // Padding around grid (so outside lines aren't cut off)
-    const int gridH = 8;       // Height of grid (in squares)
-    const int gridW = 12;      // Width of grid (in squares)
-    const int numGrids = 3;    // Number of grids to render
-    const double sqzFctr = 3;  // Factor by which the grid is compressed vertically
-    const double tiltFctr = 1; // Factor by which the grid is tilted (slope, e.g. 1=45deg)
+        const long minH = 200; // Sample minimum height/width (unused currently)
+        const long minW = 300;
+        const int padding = 5; // Padding around grid (so outside lines aren't cut off)
+        const int gridH = 8; // Height of grid (in squares)
+        const int gridW = 12; // Width of grid (in squares)
+        const int numGrids = 3; // Number of grids to render
+        const double sqzFctr = 3; // Factor by which the grid is compressed vertically
+        const double tiltFctr = 1; // Factor by which the grid is tilted (slope, e.g. 1=45deg)
 
     // These definitions are the default values (they are changed by a re-size)
     long canH = 570; // Current height/width of canvas
     long canW = 890;
     long gridOffset = 200; // Offset (in pixels) between grids
-    int PPS = 60;       // Pixels per grid square
+    int PPS = 60; // Pixels per grid square
 
     // Game variables
     static ChessPiece?[,,] gameBoard = new ChessPiece[gridW, gridH, numGrids];
-    static int turnPlayerUID;
+    //static int turnPlayerUID;
     //static int otherPlayerUID; // I assume this will be needed
 
     ElementReference image1;
     ElementReference image2;
     ElementReference image3;
-    Random rand = new Random();
-    private int currentCount = 0;
+    readonly Random rand = new();
+    private int currentCount;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        this.ctx = await myCanvas.CreateCanvas2DAsync();
+        ctx = await myCanvas.CreateCanvas2DAsync();
         await jsRuntime.InvokeAsync<object>("initRenderJS", DotNetObjectReference.Create(this));
         await base.OnInitializedAsync();
     }
@@ -59,7 +59,7 @@
     [JSInvokable]
     public async void ResizeInBlazor(double width, double height)
     {
-        /* Resizing formulas:
+    /* Resizing formulas:
         * (gotta calc gridOffset = PPS * (gridH + 2) / sqzFctr)
         * canH = 2 * gridOffset + PPS * gridH / sqzFctr + 2 * padding
         * canW = gridW * PPS + tiltFctr * PPS * gridH / sqzFctr + 2 * padding
@@ -72,10 +72,10 @@
         * PPS = (canW - 2 * padding) * sqzFctr / (gridW * sqzFctr + tiltFctr * gridH)
          */
 
-        double hPPS = (height - 2 * padding) * sqzFctr / (3 * gridH + 4);
-        double wPPS = (width - 2 * padding) * sqzFctr / (gridW * sqzFctr + tiltFctr * gridH);
+        var hPPS = (height - 2 * padding) * sqzFctr / (3 * gridH + 4);
+        var wPPS = (width - 2 * padding) * sqzFctr / (gridW * sqzFctr + tiltFctr * gridH);
 
-        // Check whether height or width is the limiting dimension
+    // Check whether height or width is the limiting dimension
         if (hPPS < wPPS)
         {
             PPS = (int)hPPS; // Use square size based on height
@@ -84,16 +84,16 @@
         {
             PPS = (int)wPPS; // Use square size based on width
         }
-        // Set the other variables based on the Pixels Per Square
+    // Set the other variables based on the Pixels Per Square
         gridOffset = (int)(PPS * (gridH + 2) / sqzFctr);
         canH = (int)(2 * gridOffset + PPS * gridH / sqzFctr + 2 * padding);
         canW = (int)(gridW * PPS + tiltFctr * PPS * gridH / sqzFctr + 2 * padding);
 
-        // Clear the canvas
+    // Clear the canvas
         ctx = await myCanvas.CreateCanvas2DAsync();
         await ctx.ClearRectAsync(0, 0, width, height);
 
-        // Re-render grids (with black grid lines)
+    // Re-render grids (with black grid lines)
         DrawGrid("Blue", "White", "Black", 0);
         DrawGrid("Green", "Yellow", "Black", 1);
         DrawGrid("Red", "Brown", "Black", 2);
@@ -102,28 +102,25 @@
     // TODO: Remove, this is unused and only here for future reference
     private async void OnButtonPress()
     {
-        // First time: draw grid, afterwards: draw an image to random grid square
+    // First time: draw grid, afterwards: draw an image to random grid square
         if (currentCount != 0)
         {
-            // Get reference to canvas
-            this.ctx = await this.myCanvas.CreateCanvas2DAsync();
-            // Get random grid locations
-            int gridX = rand.Next(gridW);
-            int gridY = rand.Next(gridH);
-            int gridZ = rand.Next(numGrids);
-            // Get pixel coords and draw a correctly scaled image there
+    // Get reference to canvas
+            ctx = await myCanvas.CreateCanvas2DAsync();
+    // Get random grid locations
+            var gridX = rand.Next(gridW);
+            var gridY = rand.Next(gridH);
+            var gridZ = rand.Next(numGrids);
+    // Get pixel coords and draw a correctly scaled image there
             var coords = transformXY(gridX, gridY, gridZ);
-            await ctx.DrawImageAsync(image1, coords.tx, coords.ty, PPS - (PPS / sqzFctr) * tiltFctr, PPS / sqzFctr);
+            await ctx.DrawImageAsync(image1, coords.tx, coords.ty, PPS - PPS / sqzFctr * tiltFctr, PPS / sqzFctr);
             return;
         }
-        else
-        {
-            // Draw each grid with black grid lines
-            DrawGrid("Blue", "White", "Black", 0);
-            DrawGrid("Green", "Yellow", "Black", 1);
-            DrawGrid("Red", "Brown", "Black", 2);
-            currentCount++;
-        }
+    // Draw each grid with black grid lines
+        DrawGrid("Blue", "White", "Black", 0);
+        DrawGrid("Green", "Yellow", "Black", 1);
+        DrawGrid("Red", "Brown", "Black", 2);
+        currentCount++;
     }
 
     // When a player clicks on the grid, do something about it
@@ -135,9 +132,9 @@
 
         if (divCanvas.Id?.Length > 0)
         {
-            // Get canvas coordinates clicked
-            string data = await jsRuntime.InvokeAsync<string>("getDivCanvasOffsets", new object[] { divCanvas });
-            JObject? offsets = (JObject?)JsonConvert.DeserializeObject(data);
+    // Get canvas coordinates clicked
+            var data = await jsRuntime.InvokeAsync<string>("getDivCanvasOffsets", new object[] { divCanvas });
+            var offsets = (JObject?)JsonConvert.DeserializeObject(data);
             if (offsets == null)
             {
                 return;
@@ -145,18 +142,18 @@
             mouseX = eventArgs.ClientX - offsets.Value<double>("offsetLeft");
             mouseY = eventArgs.ClientY - offsets.Value<double>("offsetTop");
 
-            // Find the square clicked (if any)
-            int x = 0;
-            int y = 0;
-            int z = 0;
-            int sqrTopY = 0;
-            int sqrBottomY = 0;
+    // Find the square clicked (if any)
+            var x = 0;
+            var y = 0;
+            var z = 0;
+            var sqrTopY = 0;
+            var sqrBottomY = 0;
             for (z = 0; z < numGrids; z++)
             {
                 for (y = 0; y < gridH; y++)
                 {
                     sqrTopY = sqrBottomY;
-                    (int trash, sqrBottomY) = transformXY(0, y + 1, z);
+                    (var trash, sqrBottomY) = transformXY(0, y + 1, z);
                     if (mouseY >= sqrTopY && mouseY < sqrBottomY)
                     {
                         break;
@@ -173,23 +170,23 @@
             }
             if (y == 0)
             {
-                // Check to see if clicked just above the grid
-                (int trash, sqrTopY) = transformXY(0, y, z);
+    // Check to see if clicked just above the grid
+                (var trash, sqrTopY) = transformXY(0, y, z);
                 if (mouseY < sqrTopY)
                 {
                     return; // Outside of grid, do nothing
                 }
             }
-            // y, z are now accurate to row clicked in
+    // y, z are now accurate to row clicked in
             for (x = 0; x <= gridW; x++)
             {
-                // TODO: Check each square for click
+    // TODO: Check each square for click
                 var p1 = transformXY(x, y, z);
                 var p2 = transformXY(x, y + 1, z);
-                double crossProd = ((p2.tx - p1.tx) * (mouseY - p1.ty) - (p2.ty - p1.ty) * (mouseX - p1.tx));
+                var crossProd = (p2.tx - p1.tx) * (mouseY - p1.ty) - (p2.ty - p1.ty) * (mouseX - p1.tx);
                 if (crossProd > 0)
                 {
-                    // Positive number means left of line
+    // Positive number means left of line
                     break;
                 }
             }
@@ -199,7 +196,7 @@
                 return; // Outside (left or right) of grid, do nothing
             }
 
-            // User clicked on square (x, y, z)
+    // User clicked on square (x, y, z)
             ClickXYZ(x, y, z);
         }
     }
@@ -208,7 +205,7 @@
     // TODO: implement this function
     private void ClickXYZ(int x, int y, int z)
     {
-        //ctx = await myCanvas.CreateCanvas2DAsync(); // if necessary
+    //ctx = await myCanvas.CreateCanvas2DAsync(); // if necessary
         Console.WriteLine("Clicked here: (" + x + ", " + y + ", " + z + ")");
     }
 
@@ -216,8 +213,8 @@
     // Note: this assumes the grid will fit in the canvas, that's checked in the re-size function
     private (int tx, int ty) transformXY(int x, int y, int gridNum)
     {
-        double ty = y * PPS / sqzFctr;
-        double tx = x * PPS + tiltFctr * (PPS * gridH / sqzFctr - ty);
+        var ty = y * PPS / sqzFctr;
+        var tx = x * PPS + tiltFctr * (PPS * gridH / sqzFctr - ty);
         tx += padding; // Add padding
         ty += gridOffset * gridNum + padding; // Add grid offset and padding
 
@@ -227,51 +224,52 @@
     // Render the specified grid with the specified colors
     private async void DrawGrid(string color1, string color2, string lineColor, int gridIndex)
     {
-        // Grab canvas reference
-        this.ctx = await this.myCanvas.CreateCanvas2DAsync();
+    // Grab canvas reference
+        ctx = await myCanvas.CreateCanvas2DAsync();
 
-        // Signal the start of a batch of rendering calls
-        await this.ctx.BeginBatchAsync();
+    // Signal the start of a batch of rendering calls
+        await ctx.BeginBatchAsync();
 
-        // Loop through each grid and then each grid square
-        for (int x = 0; x < gridW; x++)
+    // Loop through each grid and then each grid square
+        for (var x = 0; x < gridW; x++)
         {
-            for (int y = 0; y < gridH; y++)
+            for (var y = 0; y < gridH; y++)
             {
-                string fillColor = (((x + y) % 2) == 1) ? color1 : color2; // Find the right color for this square
-                DrawSquare(x, y, gridIndex, fillColor, lineColor);         // Render the square
+                var fillColor = (x + y) % 2 == 1 ? color1 : color2; // Find the right color for this square
+                DrawSquare(x, y, gridIndex, fillColor, lineColor); // Render the square
             }
         }
-        // Signal the end of the batch of rendering calls (now it all renders at once)
-        await this.ctx.EndBatchAsync();
+    // Signal the end of the batch of rendering calls (now it all renders at once)
+        await ctx.EndBatchAsync();
     }
 
     // Render a specific grid square in the specified colors
     private async void DrawSquare(int x, int y, int gridIndex, string fillColor, string lineColor)
     {
-        if (this.ctx == null)
+        if (ctx == null)
         {
             return;
         }
-        // Set stroke style and begin path
-        await this.ctx.SetStrokeStyleAsync(lineColor);
-        await this.ctx.SetLineWidthAsync(3);
-        await this.ctx.BeginPathAsync();
+    // Set stroke style and begin path
+        await ctx.SetStrokeStyleAsync(lineColor);
+        await ctx.SetLineWidthAsync(3);
+        await ctx.BeginPathAsync();
 
-        // Draw the border of this square
+    // Draw the border of this square
         var coords = transformXY(x, y, gridIndex);
-        await this.ctx.MoveToAsync(coords.tx, coords.ty);
+        await ctx.MoveToAsync(coords.tx, coords.ty);
         coords = transformXY(x, y + 1, gridIndex);
-        await this.ctx.LineToAsync(coords.tx, coords.ty);
+        await ctx.LineToAsync(coords.tx, coords.ty);
         coords = transformXY(x + 1, y + 1, gridIndex);
-        await this.ctx.LineToAsync(coords.tx, coords.ty);
+        await ctx.LineToAsync(coords.tx, coords.ty);
         coords = transformXY(x + 1, y, gridIndex);
-        await this.ctx.LineToAsync(coords.tx, coords.ty);
+        await ctx.LineToAsync(coords.tx, coords.ty);
 
-        // Close the path and fill the square in the right color
-        await this.ctx.ClosePathAsync();
-        await this.ctx.StrokeAsync();
-        await this.ctx.SetFillStyleAsync(fillColor);
-        await this.ctx.FillAsync();
+    // Close the path and fill the square in the right color
+        await ctx.ClosePathAsync();
+        await ctx.StrokeAsync();
+        await ctx.SetFillStyleAsync(fillColor);
+        await ctx.FillAsync();
     }
+
 }

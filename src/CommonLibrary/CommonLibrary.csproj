@@ -5,6 +5,8 @@
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <AssemblyName>DragonChess.CommonLibrary</AssemblyName>
+        <RootNamespace>DragonChess.CommonLibrary</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
