@@ -15,9 +15,9 @@ public class Sylph : ChessPiece
     {
     }
 
-    public override List<Position> ValidMoves(ChessPiece[,,] board)
+    public override List<Position> ValidMoves(ChessPiece?[,,] board)
     {
-        List<Position> moves = new();
+        var moves = new List<Position>();
         if (Immobile)
         {
             return moves;
@@ -44,8 +44,8 @@ public class Sylph : ChessPiece
         else if (Position.Z == 2)
         {
             /* Can capture directly below */
-            if (board[Position.X, Position.Y, 1] != null &&
-                board[Position.X, Position.Y, 1].Owner != Owner)
+            var positionBelow = board[Position.X, Position.Y, 1];
+            if (positionBelow != null && positionBelow.Owner != Owner)
             {
                 moves.Add(new Position(Position.X, Position.Y, 1));
             }
@@ -58,8 +58,8 @@ public class Sylph : ChessPiece
             }
 
             /* Can capture directly forward */
-            if (board[Position.X, nextYLine, 2] != null &&
-                board[Position.X, nextYLine, 2].Owner != Owner)
+            var positionForward = board[Position.X, nextYLine, 2];
+            if (positionForward != null && positionForward.Owner != Owner)
             {
                 moves.Add(new Position(Position.X, nextYLine, 2));
             }

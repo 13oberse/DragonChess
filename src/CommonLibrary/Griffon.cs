@@ -15,9 +15,9 @@ public class Griffon : ChessPiece
     {
     }
 
-    public override List<Position> ValidMoves(ChessPiece[,,] board)
+    public override List<Position> ValidMoves(ChessPiece?[,,] board)
     {
-        List<Position> moves = new();
+        var moves = new List<Position>();
         if (Immobile)
         {
             return moves;
@@ -27,179 +27,32 @@ public class Griffon : ChessPiece
         {
             /* Can move and capture like a knight, but in a (2,3) jump */
             /* Screw it, check them manually */
-            if (Position.X - 2 >= 0 && Position.Y - 3 >= 0)
-            {
-                if (board[Position.X - 2, Position.Y - 3, 2] == null ||
-                    board[Position.X - 2, Position.Y - 3, 2].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X - 2, Position.Y - 3, 2));
-                }
-            }
-
-            if (Position.X - 3 >= 0 && Position.Y - 2 >= 0)
-            {
-                if (board[Position.X - 3, Position.Y - 2, 2] == null ||
-                    board[Position.X - 3, Position.Y - 2, 2].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X - 3, Position.Y - 2, 2));
-                }
-            }
-
-            if (Position.X - 2 >= 0 && Position.Y + 3 < 8)
-            {
-                if (board[Position.X - 2, Position.Y + 3, 2] == null ||
-                    board[Position.X - 2, Position.Y + 3, 2].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X - 2, Position.Y + 3, 2));
-                }
-            }
-
-            if (Position.X - 3 >= 0 && Position.Y + 2 < 8)
-            {
-                if (board[Position.X - 3, Position.Y + 2, 2] == null ||
-                    board[Position.X - 3, Position.Y + 2, 2].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X - 3, Position.Y + 2, 2));
-                }
-            }
-
-            if (Position.X + 2 < 12 && Position.Y - 3 >= 0)
-            {
-                if (board[Position.X + 2, Position.Y - 3, 2] == null ||
-                    board[Position.X + 2, Position.Y - 3, 2].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X + 2, Position.Y - 3, 2));
-                }
-            }
-
-            if (Position.X + 3 < 12 && Position.Y - 2 >= 0)
-            {
-                if (board[Position.X + 3, Position.Y - 2, 2] == null ||
-                    board[Position.X + 3, Position.Y - 2, 2].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X + 3, Position.Y - 2, 2));
-                }
-            }
-
-            if (Position.X + 2 < 12 && Position.Y + 3 < 8)
-            {
-                if (board[Position.X + 2, Position.Y + 3, 2] == null ||
-                    board[Position.X + 2, Position.Y + 3, 2].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X + 2, Position.Y + 3, 2));
-                }
-            }
-
-            if (Position.X + 3 < 12 && Position.Y + 2 < 8)
-            {
-                if (board[Position.X + 3, Position.Y + 2, 2] == null ||
-                    board[Position.X + 3, Position.Y + 2, 2].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X + 3, Position.Y + 2, 2));
-                }
-            }
-
-            /* And can move and capture triagonally to the middle level */
-            if (Position.X - 1 >= 0 && Position.Y - 1 >= 0)
-            {
-                if (board[Position.X - 1, Position.Y - 1, 1] == null ||
-                    board[Position.X - 1, Position.Y - 1, 1].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X - 1, Position.Y - 1, 1));
-                }
-            }
-
-            if (Position.X - 1 >= 0 && Position.Y + 1 < 8)
-            {
-                if (board[Position.X - 1, Position.Y + 1, 1] == null ||
-                    board[Position.X - 1, Position.Y + 1, 1].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X - 1, Position.Y + 1, 1));
-                }
-            }
-
-            if (Position.X + 1 < 12 && Position.Y - 1 >= 0)
-            {
-                if (board[Position.X + 1, Position.Y - 1, 1] == null ||
-                    board[Position.X + 1, Position.Y - 1, 1].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X + 1, Position.Y - 1, 1));
-                }
-            }
-
-            if (Position.X + 1 < 12 && Position.Y + 1 < 8)
-            {
-                if (board[Position.X + 1, Position.Y + 1, 1] == null ||
-                    board[Position.X + 1, Position.Y + 1, 1].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X + 1, Position.Y + 1, 1));
-                }
-            }
+            CheckMove(board, moves, Position.X - 2, Position.Y - 3, 2);
+            CheckMove(board, moves, Position.X - 3, Position.Y - 2, 2);
+            CheckMove(board, moves, Position.X - 2, Position.Y + 3, 2);
+            CheckMove(board, moves, Position.X - 3, Position.Y + 2, 2);
+            CheckMove(board, moves, Position.X + 2, Position.Y - 3, 2);
+            CheckMove(board, moves, Position.X + 2, Position.Y - 3, 2);
+            CheckMove(board, moves, Position.X + 2, Position.Y + 3, 2);
+            CheckMove(board, moves, Position.X + 3, Position.Y + 2, 2);
+            CheckMove(board, moves, Position.X - 1, Position.Y - 1, 1);
+            CheckMove(board, moves, Position.X - 1, Position.Y + 1, 1);
+            CheckMove(board, moves, Position.X + 1, Position.Y - 1, 1);
+            CheckMove(board, moves, Position.X + 1, Position.Y + 1, 1);
         }
 
         if (Position.Z == 1)
         {
             /* Can move and capture one step diagonally or */
             /* move and capture one step triagonally to the top level */
-            if (Position.X - 1 >= 0 && Position.Y - 1 >= 0)
-            {
-                if (board[Position.X - 1, Position.Y - 1, 1] == null ||
-                    board[Position.X - 1, Position.Y - 1, 1].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X - 1, Position.Y - 1, 1));
-                }
-
-                if (board[Position.X - 1, Position.Y - 1, 2] == null ||
-                    board[Position.X - 1, Position.Y - 1, 2].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X - 1, Position.Y - 1, 2));
-                }
-            }
-
-            if (Position.X - 1 >= 0 && Position.Y + 1 < 8)
-            {
-                if (board[Position.X - 1, Position.Y + 1, 1] == null ||
-                    board[Position.X - 1, Position.Y + 1, 1].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X - 1, Position.Y + 1, 1));
-                }
-
-                if (board[Position.X - 1, Position.Y + 1, 2] == null ||
-                    board[Position.X - 1, Position.Y + 1, 2].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X - 1, Position.Y + 1, 2));
-                }
-            }
-
-            if (Position.X + 1 < 12 && Position.Y - 1 >= 0)
-            {
-                if (board[Position.X + 1, Position.Y - 1, 1] == null ||
-                    board[Position.X + 1, Position.Y - 1, 1].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X + 1, Position.Y - 1, 1));
-                }
-
-                if (board[Position.X + 1, Position.Y - 1, 2] == null ||
-                    board[Position.X + 1, Position.Y - 1, 2].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X + 1, Position.Y - 1, 2));
-                }
-            }
-
-            if (Position.X + 1 < 12 && Position.Y + 1 < 8)
-            {
-                if (board[Position.X + 1, Position.Y + 1, 1] == null ||
-                    board[Position.X + 1, Position.Y + 1, 1].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X + 1, Position.Y + 1, 1));
-                }
-
-                if (board[Position.X + 1, Position.Y + 1, 2] == null ||
-                    board[Position.X + 1, Position.Y + 1, 2].Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X + 1, Position.Y + 1, 2));
-                }
-            }
+            CheckMove(board, moves, Position.X - 1, Position.Y - 1, 1);
+            CheckMove(board, moves, Position.X - 1, Position.Y - 1, 2);
+            CheckMove(board, moves, Position.X - 1, Position.Y + 1, 1);
+            CheckMove(board, moves, Position.X - 1, Position.Y + 1, 2);
+            CheckMove(board, moves, Position.X + 1, Position.Y - 1, 1);
+            CheckMove(board, moves, Position.X + 1, Position.Y - 1, 2);
+            CheckMove(board, moves, Position.X + 1, Position.Y + 1, 1);
+            CheckMove(board, moves, Position.X + 1, Position.Y + 1, 2);
         }
 
         /* Illegal position */

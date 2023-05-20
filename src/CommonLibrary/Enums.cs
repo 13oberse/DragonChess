@@ -1,6 +1,6 @@
 namespace DragonChess.CommonLibrary;
 
-public enum PlayerColor
+public enum PlayerColor : byte
 {
     White,
     Black

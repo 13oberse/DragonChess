@@ -16,9 +16,9 @@ public class Dragon : ChessPiece
     {
     }
 
-    public override List<Position> ValidMoves(ChessPiece[,,] board)
+    public override List<Position> ValidMoves(ChessPiece?[,,] board)
     {
-        List<Position> moves = new();
+        var moves = new List<Position>();
         if (Immobile || Position.Z != 2)
         {
             return moves; // Immobile or illegal position
@@ -35,10 +35,11 @@ public class Dragon : ChessPiece
             }
 
             /* If there's a piece here blocking further movement, break out */
-            if (board[Position.X - i, Position.Y - i, 2] != null)
+            var blockingPiece = board[Position.X - i, Position.Y - i, 2];
+            if (blockingPiece != null)
             {
                 /* If it's an enemy piece, it can be captured */
-                if (board[Position.X - i, Position.Y - i, 2].Owner != Owner)
+                if (blockingPiece.Owner != Owner)
                 {
                     moves.Add(new Position(Position.X - i, Position.Y - i, 2));
                 }
@@ -59,10 +60,11 @@ public class Dragon : ChessPiece
             }
 
             /* If there's a piece here blocking further movement, break out */
-            if (board[Position.X - i, Position.Y + i, 2] != null)
+            var blockingPiece = board[Position.X - i, Position.Y + i, 2];
+            if (blockingPiece != null)
             {
                 /* If it's an enemy piece, it can be captured */
-                if (board[Position.X - i, Position.Y + i, 2].Owner != Owner)
+                if (blockingPiece.Owner != Owner)
                 {
                     moves.Add(new Position(Position.X - i, Position.Y + i, 2));
                 }
@@ -83,10 +85,11 @@ public class Dragon : ChessPiece
             }
 
             /* If there's a piece here blocking further movement, break out */
-            if (board[Position.X + i, Position.Y - i, 2] != null)
+            var blockingPiece = board[Position.X + i, Position.Y - i, 2];
+            if (blockingPiece != null)
             {
                 /* If it's an enemy piece, it can be captured */
-                if (board[Position.X + i, Position.Y - i, 2].Owner != Owner)
+                if (blockingPiece.Owner != Owner)
                 {
                     moves.Add(new Position(Position.X + i, Position.Y - i, 2));
                 }
@@ -107,10 +110,11 @@ public class Dragon : ChessPiece
             }
 
             /* If there's a piece here blocking further movement, break out */
-            if (board[Position.X + i, Position.Y + i, 2] != null)
+            var blockingPiece = board[Position.X + i, Position.Y + i, 2];
+            if (blockingPiece != null)
             {
                 /* If it's an enemy piece, it can be captured */
-                if (board[Position.X + i, Position.Y + i, 2].Owner != Owner)
+                if (blockingPiece.Owner != Owner)
                 {
                     moves.Add(new Position(Position.X + i, Position.Y + i, 2));
                 }
@@ -126,8 +130,8 @@ public class Dragon : ChessPiece
         /* Since diagonals are covered above, only orthogonal spaces need checked */
         if (Position.X - 1 >= 0)
         {
-            if (board[Position.X - 1, Position.Y, 2] == null ||
-                board[Position.X - 1, Position.Y, 2].Owner != Owner)
+            var positionToCheck = board[Position.X - 1, Position.Y, 2];
+            if (positionToCheck == null || positionToCheck.Owner != Owner)
             {
                 moves.Add(new Position(Position.X - 1, Position.Y, 2));
             }
@@ -135,8 +139,8 @@ public class Dragon : ChessPiece
 
         if (Position.X + 1 < 12)
         {
-            if (board[Position.X + 1, Position.Y, 2] == null ||
-                board[Position.X + 1, Position.Y, 2].Owner != Owner)
+            var positionToCheck = board[Position.X + 1, Position.Y, 2];
+            if (positionToCheck == null || positionToCheck.Owner != Owner)
             {
                 moves.Add(new Position(Position.X + 1, Position.Y, 2));
             }
@@ -144,8 +148,8 @@ public class Dragon : ChessPiece
 
         if (Position.Y - 1 >= 0)
         {
-            if (board[Position.X, Position.Y - 1, 2] == null ||
-                board[Position.X, Position.Y - 1, 2].Owner != Owner)
+            var positionToCheck = board[Position.X, Position.Y - 1, 2];
+            if (positionToCheck == null || positionToCheck.Owner != Owner)
             {
                 moves.Add(new Position(Position.X, Position.Y - 1, 2));
             }
@@ -153,8 +157,8 @@ public class Dragon : ChessPiece
 
         if (Position.Y + 1 < 8)
         {
-            if (board[Position.X, Position.Y + 1, 2] == null ||
-                board[Position.X, Position.Y + 1, 2].Owner != Owner)
+            var positionToCheck = board[Position.X, Position.Y + 1, 2];
+            if (positionToCheck == null || positionToCheck.Owner != Owner)
             {
                 moves.Add(new Position(Position.X, Position.Y + 1, 2));
             }
@@ -163,7 +167,7 @@ public class Dragon : ChessPiece
         return moves;
     }
 
-    public override List<Position> RemoteCaptures(ChessPiece[,,] board)
+    public override List<Position> RemoteCaptures(ChessPiece?[,,] board)
     {
         var moves = new List<Position>();
         if (Immobile)
@@ -184,8 +188,8 @@ public class Dragon : ChessPiece
                         Position.X + i < 12 && Position.Y + j < 8)
                         /* If there is an enemy piece here, it can be captured */
                     {
-                        if (board[Position.X + i, Position.Y + j, 1] != null &&
-                            board[Position.X + i, Position.Y + j, 1].Owner != Owner)
+                        var positionToCheck = board[Position.X + i, Position.Y + j, 1];
+                        if (positionToCheck != null && positionToCheck.Owner != Owner)
                         {
                             moves.Add(new Position(Position.X + i, Position.Y + i, 1));
                         }

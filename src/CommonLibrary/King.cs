@@ -14,9 +14,9 @@ public class King : ChessPiece
     {
     }
 
-    public override List<Position> ValidMoves(ChessPiece[,,] board)
+    public override List<Position> ValidMoves(ChessPiece?[,,] board)
     {
-        List<Position> moves = new();
+        var moves = new List<Position>();
         if (Immobile)
         {
             return moves;

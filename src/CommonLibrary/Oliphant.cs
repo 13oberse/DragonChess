@@ -12,9 +12,9 @@ public class Oliphant : ChessPiece
     {
     }
 
-    public override List<Position> ValidMoves(ChessPiece[,,] board)
+    public override List<Position> ValidMoves(ChessPiece?[,,] board)
     {
-        List<Position> moves = new();
+        var moves = new List<Position>();
         if (Immobile || Position.Z != 1)
         {
             return moves; // Immobilized or illegal position
@@ -32,10 +32,11 @@ public class Oliphant : ChessPiece
             }
 
             /* If there's a piece here blocking further movement, break out */
-            if (board[Position.X - i, Position.Y, 1] != null)
+            var blockingPiece = board[Position.X - i, Position.Y, 1];
+            if (blockingPiece != null)
             {
                 /* If it's an enemy piece, it can be captured */
-                if (board[Position.X - i, Position.Y, 1].Owner != Owner)
+                if (blockingPiece.Owner != Owner)
                 {
                     moves.Add(new Position(Position.X - i, Position.Y, 1));
                 }
@@ -57,10 +58,11 @@ public class Oliphant : ChessPiece
             }
 
             /* If there's a piece here blocking further movement, break out */
-            if (board[Position.X + i, Position.Y, 1] != null)
+            var blockingPiece = board[Position.X + i, Position.Y, 1];
+            if (blockingPiece != null)
             {
                 /* If it's an enemy piece, it can be captured */
-                if (board[Position.X + i, Position.Y, 1].Owner != Owner)
+                if (blockingPiece.Owner != Owner)
                 {
                     moves.Add(new Position(Position.X + i, Position.Y, 1));
                 }
@@ -82,10 +84,11 @@ public class Oliphant : ChessPiece
             }
 
             /* If there's a piece here blocking further movement, break out */
-            if (board[Position.X, Position.Y - i, 1] != null)
+            var blockingPiece = board[Position.X, Position.Y - i, 1];
+            if (blockingPiece != null)
             {
                 /* If it's an enemy piece, it can be captured */
-                if (board[Position.X, Position.Y - i, 1].Owner != Owner)
+                if (blockingPiece.Owner != Owner)
                 {
                     moves.Add(new Position(Position.X, Position.Y - i, 1));
                 }
@@ -107,10 +110,11 @@ public class Oliphant : ChessPiece
             }
 
             /* If there's a piece here blocking further movement, break out */
-            if (board[Position.X, Position.Y + i, 1] != null)
+            var blockingPiece = board[Position.X, Position.Y + i, 1];
+            if (blockingPiece != null)
             {
                 /* If it's an enemy piece, it can be captured */
-                if (board[Position.X, Position.Y + i, 1].Owner != Owner)
+                if (blockingPiece.Owner != Owner)
                 {
                     moves.Add(new Position(Position.X, Position.Y + i, 1));
                 }

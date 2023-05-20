@@ -16,9 +16,9 @@ public class Basilisk : ChessPiece
     {
     }
 
-    public override List<Position> ValidMoves(ChessPiece[,,] board)
+    public override List<Position> ValidMoves(ChessPiece?[,,] board)
     {
-        List<Position> moves = new();
+        var moves = new List<Position>();
         if (Immobile)
         {
             return moves;
@@ -29,7 +29,7 @@ public class Basilisk : ChessPiece
 
     public override void MoveTo(ChessPiece?[,,] board, int x, int y, int z)
     {
-        // TODO: immobilize/remobilize pieces
+        // TODO: immobilize/re-mobilize pieces
         LastPosition.CopyPos(Position);
         Position.NewPos(x, y, z);
 

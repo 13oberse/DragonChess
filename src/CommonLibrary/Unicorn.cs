@@ -12,9 +12,9 @@ public class Unicorn : ChessPiece
     {
     }
 
-    public override List<Position> ValidMoves(ChessPiece[,,] board)
+    public override List<Position> ValidMoves(ChessPiece?[,,] board)
     {
-        List<Position> moves = new();
+        var moves = new List<Position>();
         if (Immobile || Position.Z != 1)
         {
             return moves; // Immobile or illegal position
@@ -23,8 +23,8 @@ public class Unicorn : ChessPiece
         /* Can move/capture like a chess knight */
         if (Position.X - 1 >= 0 && Position.Y - 2 >= 0)
         {
-            if (board[Position.X - 1, Position.Y - 2, 1] == null ||
-                board[Position.X - 1, Position.Y - 2, 1].Owner != Owner)
+            var positionToCheck = board[Position.X - 1, Position.Y - 2, 1];
+            if (positionToCheck == null || positionToCheck.Owner != Owner)
             {
                 moves.Add(new Position(Position.X - 1, Position.Y - 2, 1));
             }
@@ -32,8 +32,8 @@ public class Unicorn : ChessPiece
 
         if (Position.X - 2 >= 0 && Position.Y - 1 >= 0)
         {
-            if (board[Position.X - 2, Position.Y - 1, 1] == null ||
-                board[Position.X - 2, Position.Y - 1, 1].Owner != Owner)
+            var positionToCheck = board[Position.X - 2, Position.Y - 1, 1];
+            if (positionToCheck == null || positionToCheck.Owner != Owner)
             {
                 moves.Add(new Position(Position.X - 2, Position.Y - 1, 1));
             }
@@ -41,8 +41,8 @@ public class Unicorn : ChessPiece
 
         if (Position.X - 1 >= 0 && Position.Y + 2 < 8)
         {
-            if (board[Position.X - 1, Position.Y + 2, 1] == null ||
-                board[Position.X - 1, Position.Y + 2, 1].Owner != Owner)
+            var positionToCheck = board[Position.X - 1, Position.Y + 2, 1];
+            if (positionToCheck == null || positionToCheck.Owner != Owner)
             {
                 moves.Add(new Position(Position.X - 1, Position.Y + 2, 1));
             }
@@ -50,8 +50,8 @@ public class Unicorn : ChessPiece
 
         if (Position.X - 2 >= 0 && Position.Y + 1 < 8)
         {
-            if (board[Position.X - 2, Position.Y + 1, 1] == null ||
-                board[Position.X - 2, Position.Y + 1, 1].Owner != Owner)
+            var positionToCheck = board[Position.X - 2, Position.Y + 1, 1];
+            if (positionToCheck == null || positionToCheck.Owner != Owner)
             {
                 moves.Add(new Position(Position.X - 2, Position.Y + 1, 1));
             }
@@ -59,8 +59,8 @@ public class Unicorn : ChessPiece
 
         if (Position.X + 1 < 12 && Position.Y - 2 >= 0)
         {
-            if (board[Position.X + 1, Position.Y - 2, 1] == null ||
-                board[Position.X + 1, Position.Y - 2, 1].Owner != Owner)
+            var positionToCheck = board[Position.X + 1, Position.Y - 2, 1];
+            if (positionToCheck == null || positionToCheck.Owner != Owner)
             {
                 moves.Add(new Position(Position.X + 1, Position.Y - 2, 1));
             }
@@ -68,8 +68,8 @@ public class Unicorn : ChessPiece
 
         if (Position.X + 2 < 12 && Position.Y - 1 >= 0)
         {
-            if (board[Position.X + 2, Position.Y - 1, 1] == null ||
-                board[Position.X + 2, Position.Y - 1, 1].Owner != Owner)
+            var positionToCheck = board[Position.X + 2, Position.Y - 1, 1];
+            if (positionToCheck == null || positionToCheck.Owner != Owner)
             {
                 moves.Add(new Position(Position.X + 2, Position.Y - 1, 1));
             }
@@ -77,8 +77,8 @@ public class Unicorn : ChessPiece
 
         if (Position.X + 1 < 12 && Position.Y + 2 < 8)
         {
-            if (board[Position.X + 1, Position.Y + 2, 1] == null ||
-                board[Position.X + 1, Position.Y + 2, 1].Owner != Owner)
+            var positionToCheck = board[Position.X + 1, Position.Y + 2, 1];
+            if (positionToCheck == null || positionToCheck.Owner != Owner)
             {
                 moves.Add(new Position(Position.X + 1, Position.Y + 2, 1));
             }
@@ -86,8 +86,8 @@ public class Unicorn : ChessPiece
 
         if (Position.X + 2 < 12 && Position.Y + 1 < 8)
         {
-            if (board[Position.X + 2, Position.Y + 1, 1] == null ||
-                board[Position.X + 2, Position.Y + 1, 1].Owner != Owner)
+            var positionToCheck = board[Position.X + 2, Position.Y + 1, 1];
+            if (positionToCheck == null || positionToCheck.Owner != Owner)
             {
                 moves.Add(new Position(Position.X + 2, Position.Y + 1, 1));
             }

@@ -4,8 +4,7 @@ namespace DragonChess.CommonLibrary;
 
 public abstract class ChessPiece
 {
-    protected bool Immobile;
-
+    protected bool Immobile { get; set; }
     public Position Position { get; set; }
     protected Position LastPosition { get; set; }
 
@@ -19,9 +18,9 @@ public abstract class ChessPiece
         Owner = white;
     }
 
-    public abstract List<Position> ValidMoves(ChessPiece[,,] board);
+    public abstract List<Position> ValidMoves(ChessPiece?[,,] board);
 
-    public virtual List<Position> RemoteCaptures(ChessPiece[,,] board) => new();
+    public virtual List<Position> RemoteCaptures(ChessPiece?[,,] board) => new();
 
     public virtual void MoveTo(ChessPiece?[,,] board, int x, int y, int z)
     {
@@ -32,5 +31,19 @@ public abstract class ChessPiece
         // Update the board (note: this currently loses references to any captured pieces)
         board[Position.X, Position.Y, Position.Z] = this;
         board[LastPosition.X, LastPosition.Y, LastPosition.Z] = null;
+    }
+
+    protected void CheckMove(ChessPiece?[,,] board, List<Position> moves, int x, int y, int z)
+    {
+        if (x is < 0 or > 11 || y is < 0 or > 7 || z is < 0 or > 2)
+        {
+            return;
+        }
+
+        var positionToCheck = board[x, y, z];
+        if (positionToCheck == null || positionToCheck.Owner != Owner)
+        {
+            moves.Add(new Position(x, y, z));
+        }
     }
 }

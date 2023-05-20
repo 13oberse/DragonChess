@@ -13,9 +13,9 @@ public class Warrior : ChessPiece
     {
     }
 
-    public override List<Position> ValidMoves(ChessPiece[,,] board)
+    public override List<Position> ValidMoves(ChessPiece?[,,] board)
     {
-        List<Position> moves = new();
+        var moves = new List<Position>();
         if (Immobile)
         {
             return moves;
@@ -26,7 +26,7 @@ public class Warrior : ChessPiece
             /* Can move like a chess pawn (but without the initial 2-step option) */
             /* Calculate the row it can move to */
             var nextYLine = Position.Y + (Owner ? 1 : -1);
-            if (nextYLine < 0 || nextYLine >= 8)
+            if (nextYLine is < 0 or >= 8)
             {
                 return moves; // Illegal position/should've been promoted
             }
