@@ -29,28 +29,28 @@ public class Dragon : ChessPiece
         for (var i = 1; i < 8; i++) // -x, -y direction
         {
             /* If there's a piece there, break out of loop */
-            if (CheckMove(board, moves, Position.X - i, Position.Y - i, 2))
+            if (!CheckMove(board, moves, Position.X - i, Position.Y - i, 2))
                 break;
         }
 
         for (var i = 1; i < 8; i++) // -x, +y direction
         {
             /* If there's a piece there, break out of loop */
-            if (CheckMove(board, moves, Position.X - i, Position.Y + i, 2))
+            if (!CheckMove(board, moves, Position.X - i, Position.Y + i, 2))
                 break;
         }
 
         for (var i = 1; i < 8; i++) // +x, -y direction
         {
             /* If there's a piece there, break out of loop */
-            if (CheckMove(board, moves, Position.X + i, Position.Y - i, 2))
+            if (!CheckMove(board, moves, Position.X + i, Position.Y - i, 2))
                 break;
         }
 
         for (var i = 1; i < 8; i++) // +x, -y direction
         {
             /* If there's a piece there, break out of loop */
-            if (CheckMove(board, moves, Position.X + i, Position.Y + i, 2))
+            if (!CheckMove(board, moves, Position.X + i, Position.Y + i, 2))
                 break;
         }
 

@@ -33,6 +33,15 @@ public abstract class ChessPiece
         board[LastPosition.X, LastPosition.Y, LastPosition.Z] = null;
     }
 
+    /// <summary>
+    /// Takes a position, and adds it to 'moves' if the position is an empty square or has an enemy piece
+    /// </summary>
+    /// <param name="board"></param>
+    /// <param name="moves"></param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="z"></param>
+    /// <returns>True if the given position is an empty square</returns>
     protected bool CheckMove(ChessPiece?[,,] board, List<Position> moves, int x, int y, int z)
     {
         if (x is < 0 or > 11 || y is < 0 or > 7 || z is < 0 or > 2)
@@ -46,6 +55,6 @@ public abstract class ChessPiece
             moves.Add(new Position(x, y, z));
         }
 
-        return positionToCheck != null;
+        return positionToCheck == null;
     }
 }

@@ -26,7 +26,7 @@ public class Oliphant : ChessPiece
         for (var i = 1; i < 12; i++)
         {
             /* If there's a piece there, break out of loop */
-            if (CheckMove(board, moves, Position.X - i, Position.Y, 1))
+            if (!CheckMove(board, moves, Position.X - i, Position.Y, 1))
                 break;
         }
 
@@ -34,7 +34,7 @@ public class Oliphant : ChessPiece
         for (var i = 1; i < 12; i++)
         {
             /* If there's a piece there, break out of loop */
-            if (CheckMove(board, moves, Position.X + i, Position.Y, 1))
+            if (!CheckMove(board, moves, Position.X + i, Position.Y, 1))
                 break;
         }
 
@@ -42,7 +42,7 @@ public class Oliphant : ChessPiece
         for (var i = 1; i < 8; i++)
         {
             /* If there's a piece there, break out of loop */
-            if (CheckMove(board, moves, Position.X, Position.Y - i, 1))
+            if (!CheckMove(board, moves, Position.X, Position.Y - i, 1))
                 break;
         }
 
@@ -50,7 +50,7 @@ public class Oliphant : ChessPiece
         for (var i = 1; i < 8; i++)
         {
             /* If there's a piece there, break out of loop */
-            if (CheckMove(board, moves, Position.X, Position.Y + i, 1))
+            if (!CheckMove(board, moves, Position.X, Position.Y + i, 1))
                 break;
         }
 
