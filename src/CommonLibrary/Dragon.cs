@@ -28,141 +28,38 @@ public class Dragon : ChessPiece
         /* Loop through all valid distances for each direction */
         for (var i = 1; i < 8; i++) // -x, -y direction
         {
-            /* If this position is off the board, break out of loop */
-            if (Position.X - i < 0 || Position.Y - i < 0)
-            {
+            /* If there's a piece there, break out of loop */
+            if (CheckMove(board, moves, Position.X - i, Position.Y - i, 2))
                 break;
-            }
-
-            /* If there's a piece here blocking further movement, break out */
-            var blockingPiece = board[Position.X - i, Position.Y - i, 2];
-            if (blockingPiece != null)
-            {
-                /* If it's an enemy piece, it can be captured */
-                if (blockingPiece.Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X - i, Position.Y - i, 2));
-                }
-
-                break;
-            }
-
-            /* Nothing has blocked movement in this direction yet */
-            moves.Add(new Position(Position.X - i, Position.Y - i, 2));
         }
 
         for (var i = 1; i < 8; i++) // -x, +y direction
         {
-            /* If this position is off the board, break out of loop */
-            if (Position.X - i < 0 || Position.Y + i >= 8)
-            {
+            /* If there's a piece there, break out of loop */
+            if (CheckMove(board, moves, Position.X - i, Position.Y + i, 2))
                 break;
-            }
-
-            /* If there's a piece here blocking further movement, break out */
-            var blockingPiece = board[Position.X - i, Position.Y + i, 2];
-            if (blockingPiece != null)
-            {
-                /* If it's an enemy piece, it can be captured */
-                if (blockingPiece.Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X - i, Position.Y + i, 2));
-                }
-
-                break;
-            }
-
-            /* Nothing has blocked movement in this direction yet */
-            moves.Add(new Position(Position.X - i, Position.Y + i, 2));
         }
 
         for (var i = 1; i < 8; i++) // +x, -y direction
         {
-            /* If this position is off the board, break out of loop */
-            if (Position.X + i >= 12 || Position.Y - i < 0)
-            {
+            /* If there's a piece there, break out of loop */
+            if (CheckMove(board, moves, Position.X + i, Position.Y - i, 2))
                 break;
-            }
-
-            /* If there's a piece here blocking further movement, break out */
-            var blockingPiece = board[Position.X + i, Position.Y - i, 2];
-            if (blockingPiece != null)
-            {
-                /* If it's an enemy piece, it can be captured */
-                if (blockingPiece.Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X + i, Position.Y - i, 2));
-                }
-
-                break;
-            }
-
-            /* Nothing has blocked movement in this direction yet */
-            moves.Add(new Position(Position.X + i, Position.Y - i, 2));
         }
 
         for (var i = 1; i < 8; i++) // +x, -y direction
         {
-            /* If this position is off the board, break out of loop */
-            if (Position.X + i >= 12 || Position.Y + i >= 8)
-            {
+            /* If there's a piece there, break out of loop */
+            if (CheckMove(board, moves, Position.X + i, Position.Y + i, 2))
                 break;
-            }
-
-            /* If there's a piece here blocking further movement, break out */
-            var blockingPiece = board[Position.X + i, Position.Y + i, 2];
-            if (blockingPiece != null)
-            {
-                /* If it's an enemy piece, it can be captured */
-                if (blockingPiece.Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X + i, Position.Y + i, 2));
-                }
-
-                break;
-            }
-
-            /* Nothing has blocked movement in this direction yet */
-            moves.Add(new Position(Position.X + i, Position.Y + i, 2));
         }
 
         /* Can also move and capture as a chess king */
         /* Since diagonals are covered above, only orthogonal spaces need checked */
-        if (Position.X - 1 >= 0)
-        {
-            var positionToCheck = board[Position.X - 1, Position.Y, 2];
-            if (positionToCheck == null || positionToCheck.Owner != Owner)
-            {
-                moves.Add(new Position(Position.X - 1, Position.Y, 2));
-            }
-        }
-
-        if (Position.X + 1 < 12)
-        {
-            var positionToCheck = board[Position.X + 1, Position.Y, 2];
-            if (positionToCheck == null || positionToCheck.Owner != Owner)
-            {
-                moves.Add(new Position(Position.X + 1, Position.Y, 2));
-            }
-        }
-
-        if (Position.Y - 1 >= 0)
-        {
-            var positionToCheck = board[Position.X, Position.Y - 1, 2];
-            if (positionToCheck == null || positionToCheck.Owner != Owner)
-            {
-                moves.Add(new Position(Position.X, Position.Y - 1, 2));
-            }
-        }
-
-        if (Position.Y + 1 < 8)
-        {
-            var positionToCheck = board[Position.X, Position.Y + 1, 2];
-            if (positionToCheck == null || positionToCheck.Owner != Owner)
-            {
-                moves.Add(new Position(Position.X, Position.Y + 1, 2));
-            }
-        }
+        CheckMove(board, moves, Position.X - 1, Position.Y, 2);
+        CheckMove(board, moves, Position.X + 1, Position.Y, 2);
+        CheckMove(board, moves, Position.X, Position.Y - 1, 2);
+        CheckMove(board, moves, Position.X, Position.Y + 1, 2);
 
         return moves;
     }
@@ -191,7 +88,7 @@ public class Dragon : ChessPiece
                         var positionToCheck = board[Position.X + i, Position.Y + j, 1];
                         if (positionToCheck != null && positionToCheck.Owner != Owner)
                         {
-                            moves.Add(new Position(Position.X + i, Position.Y + i, 1));
+                            moves.Add(new Position(Position.X + i, Position.Y + j, 1));
                         }
                     }
                 }

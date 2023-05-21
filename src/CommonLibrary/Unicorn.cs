@@ -21,77 +21,14 @@ public class Unicorn : ChessPiece
         }
 
         /* Can move/capture like a chess knight */
-        if (Position.X - 1 >= 0 && Position.Y - 2 >= 0)
-        {
-            var positionToCheck = board[Position.X - 1, Position.Y - 2, 1];
-            if (positionToCheck == null || positionToCheck.Owner != Owner)
-            {
-                moves.Add(new Position(Position.X - 1, Position.Y - 2, 1));
-            }
-        }
-
-        if (Position.X - 2 >= 0 && Position.Y - 1 >= 0)
-        {
-            var positionToCheck = board[Position.X - 2, Position.Y - 1, 1];
-            if (positionToCheck == null || positionToCheck.Owner != Owner)
-            {
-                moves.Add(new Position(Position.X - 2, Position.Y - 1, 1));
-            }
-        }
-
-        if (Position.X - 1 >= 0 && Position.Y + 2 < 8)
-        {
-            var positionToCheck = board[Position.X - 1, Position.Y + 2, 1];
-            if (positionToCheck == null || positionToCheck.Owner != Owner)
-            {
-                moves.Add(new Position(Position.X - 1, Position.Y + 2, 1));
-            }
-        }
-
-        if (Position.X - 2 >= 0 && Position.Y + 1 < 8)
-        {
-            var positionToCheck = board[Position.X - 2, Position.Y + 1, 1];
-            if (positionToCheck == null || positionToCheck.Owner != Owner)
-            {
-                moves.Add(new Position(Position.X - 2, Position.Y + 1, 1));
-            }
-        }
-
-        if (Position.X + 1 < 12 && Position.Y - 2 >= 0)
-        {
-            var positionToCheck = board[Position.X + 1, Position.Y - 2, 1];
-            if (positionToCheck == null || positionToCheck.Owner != Owner)
-            {
-                moves.Add(new Position(Position.X + 1, Position.Y - 2, 1));
-            }
-        }
-
-        if (Position.X + 2 < 12 && Position.Y - 1 >= 0)
-        {
-            var positionToCheck = board[Position.X + 2, Position.Y - 1, 1];
-            if (positionToCheck == null || positionToCheck.Owner != Owner)
-            {
-                moves.Add(new Position(Position.X + 2, Position.Y - 1, 1));
-            }
-        }
-
-        if (Position.X + 1 < 12 && Position.Y + 2 < 8)
-        {
-            var positionToCheck = board[Position.X + 1, Position.Y + 2, 1];
-            if (positionToCheck == null || positionToCheck.Owner != Owner)
-            {
-                moves.Add(new Position(Position.X + 1, Position.Y + 2, 1));
-            }
-        }
-
-        if (Position.X + 2 < 12 && Position.Y + 1 < 8)
-        {
-            var positionToCheck = board[Position.X + 2, Position.Y + 1, 1];
-            if (positionToCheck == null || positionToCheck.Owner != Owner)
-            {
-                moves.Add(new Position(Position.X + 2, Position.Y + 1, 1));
-            }
-        }
+        CheckMove(board, moves, Position.X - 1, Position.Y - 2, 1);
+        CheckMove(board, moves, Position.X - 2, Position.Y - 1, 1);
+        CheckMove(board, moves, Position.X - 1, Position.Y + 2, 1);
+        CheckMove(board, moves, Position.X - 2, Position.Y + 1, 1);
+        CheckMove(board, moves, Position.X + 1, Position.Y - 2, 1);
+        CheckMove(board, moves, Position.X + 2, Position.Y - 1, 1);
+        CheckMove(board, moves, Position.X + 1, Position.Y + 2, 1);
+        CheckMove(board, moves, Position.X + 2, Position.Y + 1, 1);
 
         return moves;
     }

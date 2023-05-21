@@ -33,11 +33,11 @@ public abstract class ChessPiece
         board[LastPosition.X, LastPosition.Y, LastPosition.Z] = null;
     }
 
-    protected void CheckMove(ChessPiece?[,,] board, List<Position> moves, int x, int y, int z)
+    protected bool CheckMove(ChessPiece?[,,] board, List<Position> moves, int x, int y, int z)
     {
         if (x is < 0 or > 11 || y is < 0 or > 7 || z is < 0 or > 2)
         {
-            return;
+            return false;
         }
 
         var positionToCheck = board[x, y, z];
@@ -45,5 +45,7 @@ public abstract class ChessPiece
         {
             moves.Add(new Position(x, y, z));
         }
+
+        return positionToCheck != null;
     }
 }

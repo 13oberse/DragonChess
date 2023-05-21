@@ -38,12 +38,14 @@ public class Warrior : ChessPiece
             }
 
             /* Can capture one step diagonally forward */
-            if (Position.X - 1 >= 0 && board[Position.X - 1, nextYLine, 1] != null)
+            var positionToCheck = board[Position.X - 1, nextYLine, 1];
+            if (Position.X - 1 >= 0 && positionToCheck != null && positionToCheck.Owner != Owner)
             {
                 moves.Add(new Position(Position.X - 1, nextYLine, 1));
             }
 
-            if (Position.X + 1 < 12 && board[Position.X + 1, nextYLine, 1] != null)
+            positionToCheck = board[Position.X + 1, nextYLine, 1];
+            if (Position.X + 1 < 12 && positionToCheck != null && positionToCheck.Owner != Owner)
             {
                 moves.Add(new Position(Position.X + 1, nextYLine, 1));
             }

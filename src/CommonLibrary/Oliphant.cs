@@ -25,105 +25,33 @@ public class Oliphant : ChessPiece
         /* Negative horizontal direction */
         for (var i = 1; i < 12; i++)
         {
-            /* If this position is off the board, break out of loop */
-            if (Position.X - i < 0)
-            {
+            /* If there's a piece there, break out of loop */
+            if (CheckMove(board, moves, Position.X - i, Position.Y, 1))
                 break;
-            }
-
-            /* If there's a piece here blocking further movement, break out */
-            var blockingPiece = board[Position.X - i, Position.Y, 1];
-            if (blockingPiece != null)
-            {
-                /* If it's an enemy piece, it can be captured */
-                if (blockingPiece.Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X - i, Position.Y, 1));
-                }
-
-                break;
-            }
-
-            /* Nothing has blocked movement in this direction yet */
-            moves.Add(new Position(Position.X - i, Position.Y, 1));
         }
 
         /* Positive horizontal direction */
         for (var i = 1; i < 12; i++)
         {
-            /* If this position is off the board, break out of loop */
-            if (Position.X + i >= 12)
-            {
+            /* If there's a piece there, break out of loop */
+            if (CheckMove(board, moves, Position.X + i, Position.Y, 1))
                 break;
-            }
-
-            /* If there's a piece here blocking further movement, break out */
-            var blockingPiece = board[Position.X + i, Position.Y, 1];
-            if (blockingPiece != null)
-            {
-                /* If it's an enemy piece, it can be captured */
-                if (blockingPiece.Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X + i, Position.Y, 1));
-                }
-
-                break;
-            }
-
-            /* Nothing has blocked movement in this direction yet */
-            moves.Add(new Position(Position.X + i, Position.Y, 1));
         }
 
         /* Negative vertical direction */
         for (var i = 1; i < 8; i++)
         {
-            /* If this position is off the board, break out of loop */
-            if (Position.Y - i < 0)
-            {
+            /* If there's a piece there, break out of loop */
+            if (CheckMove(board, moves, Position.X, Position.Y - i, 1))
                 break;
-            }
-
-            /* If there's a piece here blocking further movement, break out */
-            var blockingPiece = board[Position.X, Position.Y - i, 1];
-            if (blockingPiece != null)
-            {
-                /* If it's an enemy piece, it can be captured */
-                if (blockingPiece.Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X, Position.Y - i, 1));
-                }
-
-                break;
-            }
-
-            /* Nothing has blocked movement in this direction yet */
-            moves.Add(new Position(Position.X, Position.Y - i, 1));
         }
 
         /* Positive vertical direction */
         for (var i = 1; i < 8; i++)
         {
-            /* If this position is off the board, break out of loop */
-            if (Position.Y + i >= 8)
-            {
+            /* If there's a piece there, break out of loop */
+            if (CheckMove(board, moves, Position.X, Position.Y + i, 1))
                 break;
-            }
-
-            /* If there's a piece here blocking further movement, break out */
-            var blockingPiece = board[Position.X, Position.Y + i, 1];
-            if (blockingPiece != null)
-            {
-                /* If it's an enemy piece, it can be captured */
-                if (blockingPiece.Owner != Owner)
-                {
-                    moves.Add(new Position(Position.X, Position.Y + i, 1));
-                }
-
-                break;
-            }
-
-            /* Nothing has blocked movement in this direction yet */
-            moves.Add(new Position(Position.X, Position.Y + i, 1));
         }
 
         return moves;
