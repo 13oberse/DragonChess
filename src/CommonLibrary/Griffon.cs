@@ -26,7 +26,6 @@ public class Griffon : ChessPiece
         if (Position.Z == 2)
         {
             /* Can move and capture like a knight, but in a (2,3) jump */
-            /* Screw it, check them manually */
             CheckMove(board, moves, Position.X - 2, Position.Y - 3, 2);
             CheckMove(board, moves, Position.X - 3, Position.Y - 2, 2);
             CheckMove(board, moves, Position.X - 2, Position.Y + 3, 2);

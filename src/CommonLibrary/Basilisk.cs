@@ -19,9 +19,33 @@ public class Basilisk : ChessPiece
     public override List<Position> ValidMoves(ChessPiece?[,,] board)
     {
         var moves = new List<Position>();
-        if (Immobile)
+        /* Check for mobility/valid position */
+        if (Immobile || Position.Z != 0)
         {
             return moves;
+        }
+
+        /* Index the Y-line in front of the piece */
+        var nextYLine = Position.Y + (Owner ? 1 : -1);
+        if (nextYLine >= 0 && nextYLine < 8)
+        {
+            /* Can move or capture one step straight or diagonally forward */
+            CheckMove(board, moves, Position.X - 1, nextYLine, 0);
+            CheckMove(board, moves, Position.X, nextYLine, 0);
+            CheckMove(board, moves, Position.X + 1, nextYLine, 0);
+        }
+
+        /* Can move one step straight backwards */
+        /* Index the Y-line behind the piece */
+        var lastYLine = Position.Y + (Owner ? -1 : 1);
+        if (lastYLine < 0 || lastYLine >= 8)
+        {
+            return moves; // Can't move backward
+        }
+
+        if (board[Position.X, lastYLine, 0] == null)
+        {
+            moves.Add(new Position(Position.X, lastYLine, 0));
         }
 
         return moves;
@@ -29,9 +53,22 @@ public class Basilisk : ChessPiece
 
     public override void MoveTo(ChessPiece?[,,] board, int x, int y, int z)
     {
-        // TODO: immobilize/re-mobilize pieces
+        // Update Basilisk position variables
         LastPosition.CopyPos(Position);
         Position.NewPos(x, y, z);
+
+        // Immobilize/re-mobilize pieces
+        ChessPiece? piece = board[LastPosition.X, LastPosition.Y, LastPosition.Z + 1];
+        if (piece != null)
+        {
+            piece.Immobile = false;
+        }
+
+        piece = board[Position.X, Position.Y, Position.Z + 1];
+        if (piece != null)
+        {
+            piece.Immobile = true;
+        }
 
         // Update the board (note: this currently loses references to any captured pieces)
         board[Position.X, Position.Y, Position.Z] = this;

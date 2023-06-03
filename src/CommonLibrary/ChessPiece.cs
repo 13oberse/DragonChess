@@ -4,7 +4,7 @@ namespace DragonChess.CommonLibrary;
 
 public abstract class ChessPiece
 {
-    protected bool Immobile { get; set; }
+    public bool Immobile { get; set; }
     public Position Position { get; set; }
     protected Position LastPosition { get; set; }
 
