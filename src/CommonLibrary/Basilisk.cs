@@ -45,9 +45,8 @@ public class Basilisk : ChessPiece
 
     public override void MoveTo(ChessPiece?[,,] board, int x, int y, int z)
     {
-        // Update Basilisk position variables
-        LastPosition.CopyPos(Position);
-        Position.NewPos(x, y, z);
+        /* Call base ChessPiece.MoveTo function for normal functionality */
+        base.MoveTo(board, x, y, z);
 
         // Immobilize/re-mobilize pieces
         ChessPiece? piece = board[LastPosition.X, LastPosition.Y, LastPosition.Z + 1];
@@ -61,9 +60,5 @@ public class Basilisk : ChessPiece
         {
             piece.Immobile = true;
         }
-
-        // Update the board (note: this currently loses references to any captured pieces)
-        board[Position.X, Position.Y, Position.Z] = this;
-        board[LastPosition.X, LastPosition.Y, LastPosition.Z] = null;
     }
 }

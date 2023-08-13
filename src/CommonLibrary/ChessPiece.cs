@@ -6,7 +6,7 @@ public abstract class ChessPiece
 {
     public bool Immobile { get; set; }
     public Position Position { get; set; }
-    protected Position LastPosition { get; set; }
+    public Position LastPosition { get; set; }
 
     public bool Owner { get; set; }
     // TODO: some indicator for image source

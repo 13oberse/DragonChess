@@ -38,4 +38,31 @@ public class Warrior : ChessPiece
         /* Invalid position */
         return moves;
     }
+
+    public override void MoveTo(ChessPiece?[,,] board, int x, int y, int z)
+    {
+        /* Check if this Warrior should be promoted (if it got to the back row) */
+        if (Owner?(y==7):(y==0))
+        {
+            /* Promote self to Hero (Hero.Position set by constructor) */
+            ChessPiece HeroPromotion = new Hero(Owner, x, y, z);
+
+            /* Update Hero's LastPosition */
+            HeroPromotion.LastPosition.CopyPos(Position);
+
+            /* Update the board (note: this makes a new reference to Hero, and abandons this Warrior instance) */
+            board[x, y, z] = HeroPromotion;
+            board[Position.X, Position.Y, Position.Z] = null;
+        }
+        else
+        {
+            // Update the local current and last positions
+            LastPosition.CopyPos(Position);
+            Position.NewPos(x, y, z);
+
+            // Update the board (note: this currently loses references to any captured pieces)
+            board[Position.X, Position.Y, Position.Z] = this;
+            board[LastPosition.X, LastPosition.Y, LastPosition.Z] = null;
+        }
+    }
 }
