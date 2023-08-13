@@ -42,19 +42,40 @@ public abstract class ChessPiece
     /// <param name="y"></param>
     /// <param name="z"></param>
     /// <returns>True if the given position is an empty square</returns>
-    protected bool CheckMove(ChessPiece?[,,] board, List<Position> moves, int x, int y, int z)
+    protected bool CheckMove(ChessPiece?[,,] board, List<Position> moves, int x, int y, int z, MoveType moveType)
     {
         if (x is < 0 or > 11 || y is < 0 or > 7 || z is < 0 or > 2)
         {
             return false;
         }
 
+        /* Grab position to check from the board */
         var positionToCheck = board[x, y, z];
-        if (positionToCheck == null || positionToCheck.Owner != Owner)
+
+        /* Flag for whether the given position is a valid move */
+        bool validMove = false;
+
+        /* Set validMove flag depending on moveType */
+        switch (moveType)
+        {
+            case MoveType.MoveOnly:
+                validMove = (positionToCheck == null);
+                break;
+            case MoveType.CaptureOnly:
+                validMove = (positionToCheck != null && positionToCheck.Owner != Owner);
+                break;
+            case MoveType.MoveCapture:
+                validMove = (positionToCheck == null || positionToCheck.Owner != Owner);
+                break;
+        }
+
+        /* If move is valid, add to moves */
+        if (validMove)
         {
             moves.Add(new Position(x, y, z));
         }
 
+        /* return true if position is empty */
         return positionToCheck == null;
     }
 }

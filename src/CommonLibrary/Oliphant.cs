@@ -15,9 +15,10 @@ public class Oliphant : ChessPiece
     public override List<Position> ValidMoves(ChessPiece?[,,] board)
     {
         var moves = new List<Position>();
+        /* Check for mobility/valid position */
         if (Immobile || Position.Z != 1)
         {
-            return moves; // Immobilized or illegal position
+            return moves;
         }
 
         /* Can move and capture like a chess rook */
@@ -26,7 +27,7 @@ public class Oliphant : ChessPiece
         for (var i = 1; i < 12; i++)
         {
             /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X - i, Position.Y, 1))
+            if (!CheckMove(board, moves, Position.X - i, Position.Y, 1, MoveType.MoveCapture))
                 break;
         }
 
@@ -34,7 +35,7 @@ public class Oliphant : ChessPiece
         for (var i = 1; i < 12; i++)
         {
             /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X + i, Position.Y, 1))
+            if (!CheckMove(board, moves, Position.X + i, Position.Y, 1, MoveType.MoveCapture))
                 break;
         }
 
@@ -42,7 +43,7 @@ public class Oliphant : ChessPiece
         for (var i = 1; i < 8; i++)
         {
             /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X, Position.Y - i, 1))
+            if (!CheckMove(board, moves, Position.X, Position.Y - i, 1, MoveType.MoveCapture))
                 break;
         }
 
@@ -50,7 +51,7 @@ public class Oliphant : ChessPiece
         for (var i = 1; i < 8; i++)
         {
             /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X, Position.Y + i, 1))
+            if (!CheckMove(board, moves, Position.X, Position.Y + i, 1, MoveType.MoveCapture))
                 break;
         }
 

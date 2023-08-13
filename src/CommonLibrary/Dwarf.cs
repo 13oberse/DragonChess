@@ -18,10 +18,37 @@ public class Dwarf : ChessPiece
     public override List<Position> ValidMoves(ChessPiece?[,,] board)
     {
         var moves = new List<Position>();
-        if (Immobile)
+        /* Check for mobility/valid position */
+        if (Immobile || Position.Z == 2)
         {
             return moves;
         }
+
+        if (Position.Z == 0)
+        {
+            /* Can capture directly above on surface (z=1) */
+            CheckMove(board, moves, Position.X, Position.Y, 1, MoveType.CaptureOnly);
+        }
+
+        if (Position.Z == 1)
+        {
+            /* Can move directly below to underground (z=0) */
+            CheckMove(board, moves, Position.X, Position.Y, 0, MoveType.MoveOnly);
+        }
+
+        /* Can move one step sideways */
+        CheckMove(board, moves, Position.X + 1, Position.Y, Position.Z, MoveType.MoveOnly);
+        CheckMove(board, moves, Position.X - 1, Position.Y, Position.Z, MoveType.MoveOnly);
+
+        /* Index the Y-line in front of the piece */
+        var nextYLine = Position.Y + (Owner ? 1 : -1);
+
+        /* Can move one step directly forward */
+        CheckMove(board, moves, Position.X, nextYLine, Position.Z, MoveType.MoveOnly);
+
+        /* Can capture diagonally forward */
+        CheckMove(board, moves, Position.X + 1, nextYLine, Position.Z, MoveType.CaptureOnly);
+        CheckMove(board, moves, Position.X - 1, nextYLine, Position.Z, MoveType.CaptureOnly);
 
         return moves;
     }

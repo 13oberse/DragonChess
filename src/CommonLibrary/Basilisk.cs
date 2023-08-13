@@ -30,23 +30,15 @@ public class Basilisk : ChessPiece
         if (nextYLine >= 0 && nextYLine < 8)
         {
             /* Can move or capture one step straight or diagonally forward */
-            CheckMove(board, moves, Position.X - 1, nextYLine, 0);
-            CheckMove(board, moves, Position.X, nextYLine, 0);
-            CheckMove(board, moves, Position.X + 1, nextYLine, 0);
+            CheckMove(board, moves, Position.X - 1, nextYLine, 0, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X, nextYLine, 0, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X + 1, nextYLine, 0, MoveType.MoveCapture);
         }
 
         /* Can move one step straight backwards */
         /* Index the Y-line behind the piece */
         var lastYLine = Position.Y + (Owner ? -1 : 1);
-        if (lastYLine < 0 || lastYLine >= 8)
-        {
-            return moves; // Can't move backward
-        }
-
-        if (board[Position.X, lastYLine, 0] == null)
-        {
-            moves.Add(new Position(Position.X, lastYLine, 0));
-        }
+        CheckMove(board, moves, Position.X, lastYLine, 0, MoveType.MoveOnly);
 
         return moves;
     }

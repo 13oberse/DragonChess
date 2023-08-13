@@ -26,32 +26,33 @@ public class Griffon : ChessPiece
         if (Position.Z == 2)
         {
             /* Can move and capture like a knight, but in a (2,3) jump */
-            CheckMove(board, moves, Position.X - 2, Position.Y - 3, 2);
-            CheckMove(board, moves, Position.X - 3, Position.Y - 2, 2);
-            CheckMove(board, moves, Position.X - 2, Position.Y + 3, 2);
-            CheckMove(board, moves, Position.X - 3, Position.Y + 2, 2);
-            CheckMove(board, moves, Position.X + 2, Position.Y - 3, 2);
-            CheckMove(board, moves, Position.X + 2, Position.Y - 3, 2);
-            CheckMove(board, moves, Position.X + 2, Position.Y + 3, 2);
-            CheckMove(board, moves, Position.X + 3, Position.Y + 2, 2);
-            CheckMove(board, moves, Position.X - 1, Position.Y - 1, 1);
-            CheckMove(board, moves, Position.X - 1, Position.Y + 1, 1);
-            CheckMove(board, moves, Position.X + 1, Position.Y - 1, 1);
-            CheckMove(board, moves, Position.X + 1, Position.Y + 1, 1);
+            CheckMove(board, moves, Position.X - 2, Position.Y - 3, 2, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X - 3, Position.Y - 2, 2, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X - 2, Position.Y + 3, 2, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X - 3, Position.Y + 2, 2, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X + 2, Position.Y - 3, 2, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X + 2, Position.Y - 3, 2, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X + 2, Position.Y + 3, 2, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X + 3, Position.Y + 2, 2, MoveType.MoveCapture);
+            /* Can move and capture one step triagonally */
+            CheckMove(board, moves, Position.X - 1, Position.Y - 1, 1, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X - 1, Position.Y + 1, 1, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X + 1, Position.Y - 1, 1, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X + 1, Position.Y + 1, 1, MoveType.MoveCapture);
         }
 
         if (Position.Z == 1)
         {
             /* Can move and capture one step diagonally or */
             /* move and capture one step triagonally to the top level */
-            CheckMove(board, moves, Position.X - 1, Position.Y - 1, 1);
-            CheckMove(board, moves, Position.X - 1, Position.Y - 1, 2);
-            CheckMove(board, moves, Position.X - 1, Position.Y + 1, 1);
-            CheckMove(board, moves, Position.X - 1, Position.Y + 1, 2);
-            CheckMove(board, moves, Position.X + 1, Position.Y - 1, 1);
-            CheckMove(board, moves, Position.X + 1, Position.Y - 1, 2);
-            CheckMove(board, moves, Position.X + 1, Position.Y + 1, 1);
-            CheckMove(board, moves, Position.X + 1, Position.Y + 1, 2);
+            CheckMove(board, moves, Position.X - 1, Position.Y - 1, 1, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X - 1, Position.Y - 1, 2, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X - 1, Position.Y + 1, 1, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X - 1, Position.Y + 1, 2, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X + 1, Position.Y - 1, 1, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X + 1, Position.Y - 1, 2, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X + 1, Position.Y + 1, 1, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X + 1, Position.Y + 1, 2, MoveType.MoveCapture);
         }
 
         /* Illegal position */

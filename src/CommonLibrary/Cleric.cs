@@ -14,7 +14,6 @@ public class Cleric : ChessPiece
     {
     }
 
-    //TODO
     public override List<Position> ValidMoves(ChessPiece?[,,] board)
     {
         var moves = new List<Position>();
@@ -22,6 +21,22 @@ public class Cleric : ChessPiece
         {
             return moves;
         }
+
+        /* Can move/capture like a chess king */
+        CheckMove(board, moves, Position.X - 1, Position.Y - 1, Position.Z, MoveType.MoveCapture);
+        CheckMove(board, moves, Position.X - 1, Position.Y, Position.Z, MoveType.MoveCapture);
+        CheckMove(board, moves, Position.X - 1, Position.Y + 1, Position.Z, MoveType.MoveCapture);
+
+        CheckMove(board, moves, Position.X, Position.Y - 1, Position.Z, MoveType.MoveCapture);
+        CheckMove(board, moves, Position.X, Position.Y + 1, Position.Z, MoveType.MoveCapture);
+
+        CheckMove(board, moves, Position.X + 1, Position.Y - 1, Position.Z, MoveType.MoveCapture);
+        CheckMove(board, moves, Position.X + 1, Position.Y, Position.Z, MoveType.MoveCapture);
+        CheckMove(board, moves, Position.X + 1, Position.Y + 1, Position.Z, MoveType.MoveCapture);
+
+        /* Can move directly up/down one square */
+        CheckMove(board, moves, Position.X, Position.Y, Position.Z + 1, MoveType.MoveCapture);
+        CheckMove(board, moves, Position.X, Position.Y, Position.Z - 1, MoveType.MoveCapture);
 
         return moves;
     }

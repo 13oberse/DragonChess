@@ -29,37 +29,37 @@ public class Dragon : ChessPiece
         for (var i = 1; i < 8; i++) // -x, -y direction
         {
             /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X - i, Position.Y - i, 2))
+            if (!CheckMove(board, moves, Position.X - i, Position.Y - i, 2, MoveType.MoveCapture))
                 break;
         }
 
         for (var i = 1; i < 8; i++) // -x, +y direction
         {
             /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X - i, Position.Y + i, 2))
+            if (!CheckMove(board, moves, Position.X - i, Position.Y + i, 2, MoveType.MoveCapture))
                 break;
         }
 
         for (var i = 1; i < 8; i++) // +x, -y direction
         {
             /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X + i, Position.Y - i, 2))
+            if (!CheckMove(board, moves, Position.X + i, Position.Y - i, 2, MoveType.MoveCapture))
                 break;
         }
 
         for (var i = 1; i < 8; i++) // +x, -y direction
         {
             /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X + i, Position.Y + i, 2))
+            if (!CheckMove(board, moves, Position.X + i, Position.Y + i, 2, MoveType.MoveCapture))
                 break;
         }
 
         /* Can also move and capture as a chess king */
         /* Since diagonals are covered above, only orthogonal spaces need checked */
-        CheckMove(board, moves, Position.X - 1, Position.Y, 2);
-        CheckMove(board, moves, Position.X + 1, Position.Y, 2);
-        CheckMove(board, moves, Position.X, Position.Y - 1, 2);
-        CheckMove(board, moves, Position.X, Position.Y + 1, 2);
+        CheckMove(board, moves, Position.X - 1, Position.Y, 2, MoveType.MoveCapture);
+        CheckMove(board, moves, Position.X + 1, Position.Y, 2, MoveType.MoveCapture);
+        CheckMove(board, moves, Position.X, Position.Y - 1, 2, MoveType.MoveCapture);
+        CheckMove(board, moves, Position.X, Position.Y + 1, 2, MoveType.MoveCapture);
 
         return moves;
     }

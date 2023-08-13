@@ -26,29 +26,13 @@ public class Warrior : ChessPiece
             /* Can move like a chess pawn (but without the initial 2-step option) */
             /* Calculate the row it can move to */
             var nextYLine = Position.Y + (Owner ? 1 : -1);
-            if (nextYLine is < 0 or >= 8)
-            {
-                return moves; // Illegal position/should've been promoted
-            }
 
             /* Can move (but not capture) directly ahead */
-            if (board[Position.X, nextYLine, 1] == null)
-            {
-                moves.Add(new Position(Position.X, nextYLine, 1));
-            }
+            CheckMove(board, moves, Position.X, nextYLine, 1, MoveType.MoveOnly);
 
             /* Can capture one step diagonally forward */
-            var positionToCheck = board[Position.X - 1, nextYLine, 1];
-            if (Position.X - 1 >= 0 && positionToCheck != null && positionToCheck.Owner != Owner)
-            {
-                moves.Add(new Position(Position.X - 1, nextYLine, 1));
-            }
-
-            positionToCheck = board[Position.X + 1, nextYLine, 1];
-            if (Position.X + 1 < 12 && positionToCheck != null && positionToCheck.Owner != Owner)
-            {
-                moves.Add(new Position(Position.X + 1, nextYLine, 1));
-            }
+            CheckMove(board, moves, Position.X - 1, nextYLine, 1, MoveType.CaptureOnly);
+            CheckMove(board, moves, Position.X + 1, nextYLine, 1, MoveType.CaptureOnly);
         }
 
         /* Invalid position */

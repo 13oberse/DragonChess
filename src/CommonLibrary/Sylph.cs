@@ -26,54 +26,29 @@ public class Sylph : ChessPiece
         if (Position.Z == 1)
         {
             /* Can move up if space above is unoccupied */
-            if (board[Position.X, Position.Y, 2] == null)
-            {
-                moves.Add(new Position(Position.X, Position.Y, 2));
-            }
+            CheckMove(board, moves, Position.X, Position.Y, 2, MoveType.MoveOnly);
 
             /* Can move to any of the starting sylph positions */
             var sylphStartY = Owner ? 1 : 6;
-            for (var x = 0; x <= 10; x += 2)
+            for (var x = 0; x < 12; x += 2)
             {
-                if (board[x, sylphStartY, 2] == null)
-                {
-                    moves.Add(new Position(x, sylphStartY, 2));
-                }
+                CheckMove(board, moves, x, sylphStartY, 2, MoveType.MoveOnly);
             }
         }
         else if (Position.Z == 2)
         {
             /* Can capture directly below */
-            var positionBelow = board[Position.X, Position.Y, 1];
-            if (positionBelow != null && positionBelow.Owner != Owner)
-            {
-                moves.Add(new Position(Position.X, Position.Y, 1));
-            }
+            CheckMove(board, moves, Position.X, Position.Y, 1, MoveType.CaptureOnly);
 
             /* Index the Y-line in front of the piece */
             var nextYLine = Position.Y + (Owner ? 1 : -1);
-            if (nextYLine < 0 || nextYLine >= 8)
-            {
-                return moves; // Can't move forward
-            }
 
             /* Can capture directly forward */
-            var positionForward = board[Position.X, nextYLine, 2];
-            if (positionForward != null && positionForward.Owner != Owner)
-            {
-                moves.Add(new Position(Position.X, nextYLine, 2));
-            }
+            CheckMove(board, moves, Position.X, nextYLine, 2, MoveType.CaptureOnly);
 
             /* Can move diagonally foward */
-            if (Position.X < 12 && board[Position.X + 1, nextYLine, 2] == null)
-            {
-                moves.Add(new Position(Position.X + 1, nextYLine, 2));
-            }
-
-            if (Position.X > 0 && board[Position.X - 1, nextYLine, 2] == null)
-            {
-                moves.Add(new Position(Position.X - 1, nextYLine, 2));
-            }
+            CheckMove(board, moves, Position.X + 1, nextYLine, 2, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X - 1, nextYLine, 2, MoveType.MoveOnly);
         }
 
         /* Illegal position */
