@@ -11,7 +11,7 @@ namespace DragonChess.CommonLibrary;
 /// </summary>
 public class Griffon : ChessPiece
 {
-    public Griffon(bool white, int x, int y, int z) : base(white, x, y, z)
+    public Griffon(PlayerColor color, int x, int y, int z) : base(color, x, y, z)
     {
     }
 

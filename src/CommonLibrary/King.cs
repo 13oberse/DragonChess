@@ -10,7 +10,7 @@ namespace DragonChess.CommonLibrary;
 /// </summary>
 public class King : ChessPiece
 {
-    public King(bool white, int x, int y, int z) : base(white, x, y, z)
+    public King(PlayerColor color, int x, int y, int z) : base(color, x, y, z)
     {
     }
 

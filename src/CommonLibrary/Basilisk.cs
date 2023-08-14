@@ -12,7 +12,7 @@ namespace DragonChess.CommonLibrary;
 /// </summary>
 public class Basilisk : ChessPiece
 {
-    public Basilisk(bool white, int x, int y, int z) : base(white, x, y, z)
+    public Basilisk(PlayerColor color, int x, int y, int z) : base(color, x, y, z)
     {
     }
 
@@ -26,7 +26,7 @@ public class Basilisk : ChessPiece
         }
 
         /* Index the Y-line in front of the piece */
-        var nextYLine = Position.Y + (Owner ? 1 : -1);
+        var nextYLine = Position.Y + (Owner == PlayerColor.White ? 1 : -1);
         if (nextYLine >= 0 && nextYLine < 8)
         {
             /* Can move or capture one step straight or diagonally forward */
@@ -37,7 +37,7 @@ public class Basilisk : ChessPiece
 
         /* Can move one step straight backwards */
         /* Index the Y-line behind the piece */
-        var lastYLine = Position.Y + (Owner ? -1 : 1);
+        var lastYLine = Position.Y + (Owner == PlayerColor.White ? -1 : 1);
         CheckMove(board, moves, Position.X, lastYLine, 0, MoveType.MoveOnly);
 
         return moves;

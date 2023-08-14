@@ -10,7 +10,7 @@ namespace DragonChess.CommonLibrary;
 /// </summary>
 public class Cleric : ChessPiece
 {
-    public Cleric(bool white, int x, int y, int z) : base(white, x, y, z)
+    public Cleric(PlayerColor color, int x, int y, int z) : base(color, x, y, z)
     {
     }
 

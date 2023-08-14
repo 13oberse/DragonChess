@@ -8,7 +8,7 @@ namespace DragonChess.CommonLibrary;
 /// </summary>
 public class Unicorn : ChessPiece
 {
-    public Unicorn(bool white, int x, int y, int z) : base(white, x, y, z)
+    public Unicorn(PlayerColor color, int x, int y, int z) : base(color, x, y, z)
     {
     }
 

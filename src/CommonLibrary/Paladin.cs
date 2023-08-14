@@ -12,7 +12,7 @@ namespace DragonChess.CommonLibrary;
 /// </summary>
 public class Paladin : ChessPiece
 {
-    public Paladin(bool white, int x, int y, int z) : base(white, x, y, z)
+    public Paladin(PlayerColor color, int x, int y, int z) : base(color, x, y, z)
     {
     }
 
@@ -48,7 +48,42 @@ public class Paladin : ChessPiece
             CheckMove(board, moves, Position.X + 1, Position.Y - 2, 1, MoveType.MoveCapture);
             CheckMove(board, moves, Position.X + 1, Position.Y - 2, 1, MoveType.MoveCapture);
 
-            /* Move  */
+            /* Move in a vertical knight patttern from surface */
+            CheckMove(board, moves, Position.X - 2, Position.Y, 0, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X + 2, Position.Y, 0, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X, Position.Y - 2, 0, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X, Position.Y + 2, 0, MoveType.MoveOnly);
+
+            CheckMove(board, moves, Position.X - 2, Position.Y, 2, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X + 2, Position.Y, 2, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X, Position.Y - 2, 2, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X, Position.Y + 2, 2, MoveType.MoveOnly);
+        }
+        else /* Z is not 1 (so 0 or 2) */
+        {
+            /* If not on surface (z=1), can move in vertical knight pattern to surface */
+            CheckMove(board, moves, Position.X - 2, Position.Y, 1, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X + 2, Position.Y, 1, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X, Position.Y - 2, 1, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X, Position.Y + 2, 1, MoveType.MoveOnly);
+        }
+
+        /* Can move in vertical knight pattern, only cases not covered yet are jumping between z=0 and 2 */
+        if (Position.Z == 0)
+        {
+            /* Can move in vertical knight pattern from underground to sky */
+            CheckMove(board, moves, Position.X - 1, Position.Y, 2, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X + 1, Position.Y, 2, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X, Position.Y - 1, 2, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X, Position.Y + 1, 2, MoveType.MoveOnly);
+        }
+        if (Position.Z == 2)
+        {
+            /* Can move in vertical knight pattern from sky to underground */
+            CheckMove(board, moves, Position.X - 1, Position.Y, 0, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X + 1, Position.Y, 0, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X, Position.Y - 1, 0, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X, Position.Y + 1, 0, MoveType.MoveOnly);
         }
 
         return moves;

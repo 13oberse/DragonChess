@@ -11,7 +11,7 @@ namespace DragonChess.CommonLibrary;
 /// </summary>
 public class Sylph : ChessPiece
 {
-    public Sylph(bool white, int x, int y, int z) : base(white, x, y, z)
+    public Sylph(PlayerColor color, int x, int y, int z) : base(color, x, y, z)
     {
     }
 
@@ -29,7 +29,7 @@ public class Sylph : ChessPiece
             CheckMove(board, moves, Position.X, Position.Y, 2, MoveType.MoveOnly);
 
             /* Can move to any of the starting sylph positions */
-            var sylphStartY = Owner ? 1 : 6;
+            var sylphStartY = Owner == PlayerColor.White ? 1 : 6;
             for (var x = 0; x < 12; x += 2)
             {
                 CheckMove(board, moves, x, sylphStartY, 2, MoveType.MoveOnly);
@@ -41,7 +41,7 @@ public class Sylph : ChessPiece
             CheckMove(board, moves, Position.X, Position.Y, 1, MoveType.CaptureOnly);
 
             /* Index the Y-line in front of the piece */
-            var nextYLine = Position.Y + (Owner ? 1 : -1);
+            var nextYLine = Position.Y + (Owner == PlayerColor.White ? 1 : -1);
 
             /* Can capture directly forward */
             CheckMove(board, moves, Position.X, nextYLine, 2, MoveType.CaptureOnly);

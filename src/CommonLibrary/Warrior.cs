@@ -9,7 +9,7 @@ namespace DragonChess.CommonLibrary;
 /// </summary>
 public class Warrior : ChessPiece
 {
-    public Warrior(bool white, int x, int y, int z) : base(white, x, y, z)
+    public Warrior(PlayerColor color, int x, int y, int z) : base(color, x, y, z)
     {
     }
 
@@ -25,7 +25,7 @@ public class Warrior : ChessPiece
         {
             /* Can move like a chess pawn (but without the initial 2-step option) */
             /* Calculate the row it can move to */
-            var nextYLine = Position.Y + (Owner ? 1 : -1);
+            var nextYLine = Position.Y + (Owner == PlayerColor.White ? 1 : -1);
 
             /* Can move (but not capture) directly ahead */
             CheckMove(board, moves, Position.X, nextYLine, 1, MoveType.MoveOnly);
@@ -42,7 +42,7 @@ public class Warrior : ChessPiece
     public override void MoveTo(ChessPiece?[,,] board, int x, int y, int z)
     {
         /* Check if this Warrior should be promoted (if it got to the back row) */
-        if (Owner?(y==7):(y==0))
+        if (Owner == PlayerColor.White ? (y==7):(y==0))
         {
             /* Promote self to Hero (Hero.Position set by constructor) */
             ChessPiece HeroPromotion = new Hero(Owner, x, y, z);

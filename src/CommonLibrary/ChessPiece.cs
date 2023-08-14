@@ -8,14 +8,14 @@ public abstract class ChessPiece
     public Position Position { get; set; }
     public Position LastPosition { get; set; }
 
-    public bool Owner { get; set; }
+    public PlayerColor Owner { get; set; }
     // TODO: some indicator for image source
 
-    protected ChessPiece(bool white, int x, int y, int z)
+    protected ChessPiece(PlayerColor color, int x, int y, int z)
     {
         Position = new Position(x, y, z);
         LastPosition = new Position(x, y, z);
-        Owner = white;
+        Owner = color;
     }
 
     public abstract List<Position> ValidMoves(ChessPiece?[,,] board);

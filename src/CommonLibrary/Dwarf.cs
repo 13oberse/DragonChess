@@ -11,7 +11,7 @@ namespace DragonChess.CommonLibrary;
 /// </summary>
 public class Dwarf : ChessPiece
 {
-    public Dwarf(bool white, int x, int y, int z) : base(white, x, y, z)
+    public Dwarf(PlayerColor color, int x, int y, int z) : base(color, x, y, z)
     {
     }
 
@@ -41,7 +41,7 @@ public class Dwarf : ChessPiece
         CheckMove(board, moves, Position.X - 1, Position.Y, Position.Z, MoveType.MoveOnly);
 
         /* Index the Y-line in front of the piece */
-        var nextYLine = Position.Y + (Owner ? 1 : -1);
+        var nextYLine = Position.Y + (Owner == PlayerColor.White ? 1 : -1);
 
         /* Can move one step directly forward */
         CheckMove(board, moves, Position.X, nextYLine, Position.Z, MoveType.MoveOnly);

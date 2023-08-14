@@ -10,7 +10,7 @@ namespace DragonChess.CommonLibrary;
 /// </summary>
 public class Mage : ChessPiece
 {
-    public Mage(bool white, int x, int y, int z) : base(white, x, y, z)
+    public Mage(PlayerColor color, int x, int y, int z) : base(color, x, y, z)
     {
     }
 
