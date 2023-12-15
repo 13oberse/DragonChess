@@ -13,6 +13,7 @@ public class Elemental : ChessPiece
 {
     public Elemental(PlayerColor color, int x, int y, int z) : base(color, x, y, z)
     {
+        ImgID = 3;
     }
 
     public override List<Position> ValidMoves(ChessPiece?[,,] board)

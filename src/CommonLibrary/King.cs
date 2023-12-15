@@ -12,6 +12,7 @@ public class King : ChessPiece
 {
     public King(PlayerColor color, int x, int y, int z) : base(color, x, y, z)
     {
+        ImgID = 6;
     }
 
     public override List<Position> ValidMoves(ChessPiece?[,,] board)

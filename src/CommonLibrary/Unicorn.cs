@@ -10,6 +10,7 @@ public class Unicorn : ChessPiece
 {
     public Unicorn(PlayerColor color, int x, int y, int z) : base(color, x, y, z)
     {
+        ImgID = 13;
     }
 
     public override List<Position> ValidMoves(ChessPiece?[,,] board)

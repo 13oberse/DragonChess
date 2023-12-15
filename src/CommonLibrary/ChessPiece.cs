@@ -9,7 +9,8 @@ public abstract class ChessPiece
     public Position LastPosition { get; set; }
 
     public PlayerColor Owner { get; set; }
-    // TODO: some indicator for image source
+    
+    public int ImgID { get; set; }
 
     protected ChessPiece(PlayerColor color, int x, int y, int z)
     {

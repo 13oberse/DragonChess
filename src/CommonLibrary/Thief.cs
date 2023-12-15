@@ -10,6 +10,7 @@ public class Thief : ChessPiece
 {
     public Thief(PlayerColor color, int x, int y, int z) : base(color, x, y, z)
     {
+        ImgID = 12;
     }
 
     public override List<Position> ValidMoves(ChessPiece?[,,] board)

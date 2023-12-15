@@ -12,6 +12,7 @@ public class Cleric : ChessPiece
 {
     public Cleric(PlayerColor color, int x, int y, int z) : base(color, x, y, z)
     {
+        ImgID = 1;
     }
 
     public override List<Position> ValidMoves(ChessPiece?[,,] board)

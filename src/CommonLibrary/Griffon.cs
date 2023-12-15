@@ -13,6 +13,7 @@ public class Griffon : ChessPiece
 {
     public Griffon(PlayerColor color, int x, int y, int z) : base(color, x, y, z)
     {
+        ImgID = 4;
     }
 
     public override List<Position> ValidMoves(ChessPiece?[,,] board)

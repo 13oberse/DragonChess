@@ -9,9 +9,39 @@
 <PageTitle>Counter</PageTitle>
 
 <!-- Hidden images to render later -->
-<img @ref="image1" hidden id="image1" src="assets/Italic_D.svg"/>
-<img @ref="image2" hidden id="image2" src="assets/image2.png"/>
-<img @ref="image3" hidden id="image3" src="assets/image3.png"/>
+<img @ref="image1" hidden id="image1" src="assets/Italic_D.svg" />
+
+<img @ref="blackPieces[0]" hidden id="blackB" src="assets/Black_B.svg" />
+<img @ref="blackPieces[1]" hidden id="blackC" src="assets/Black_C.svg" />
+<img @ref="blackPieces[2]" hidden id="blackD" src="assets/Black_D.svg" />
+<img @ref="blackPieces[3]" hidden id="blackE" src="assets/Black_E.svg" />
+<img @ref="blackPieces[4]" hidden id="blackG" src="assets/Black_G.svg" />
+<img @ref="blackPieces[5]" hidden id="blackH" src="assets/Black_H.svg" />
+<img @ref="blackPieces[6]" hidden id="blackK" src="assets/Black_K.svg" />
+<img @ref="blackPieces[7]" hidden id="blackM" src="assets/Black_M.svg" />
+<img @ref="blackPieces[8]" hidden id="blackO" src="assets/Black_O.svg" />
+<img @ref="blackPieces[9]" hidden id="blackP" src="assets/Black_P.svg" />
+<img @ref="blackPieces[10]" hidden id="blackR" src="assets/Black_R.svg" />
+<img @ref="blackPieces[11]" hidden id="blackS" src="assets/Black_S.svg" />
+<img @ref="blackPieces[12]" hidden id="blackT" src="assets/Black_T.svg" />
+<img @ref="blackPieces[13]" hidden id="blackU" src="assets/Black_U.svg" />
+<img @ref="blackPieces[14]" hidden id="blackW" src="assets/Black_W.svg" />
+
+<img @ref="whitePieces[0]" hidden id="whiteB" src="assets/White_B.svg" />
+<img @ref="whitePieces[1]" hidden id="whiteC" src="assets/White_C.svg" />
+<img @ref="whitePieces[2]" hidden id="whiteD" src="assets/White_D.svg" />
+<img @ref="whitePieces[3]" hidden id="whiteE" src="assets/White_E.svg" />
+<img @ref="whitePieces[4]" hidden id="whiteG" src="assets/White_G.svg" />
+<img @ref="whitePieces[5]" hidden id="whiteH" src="assets/White_H.svg" />
+<img @ref="whitePieces[6]" hidden id="whiteK" src="assets/White_K.svg" />
+<img @ref="whitePieces[7]" hidden id="whiteM" src="assets/White_M.svg" />
+<img @ref="whitePieces[8]" hidden id="whiteO" src="assets/White_O.svg" />
+<img @ref="whitePieces[9]" hidden id="whiteP" src="assets/White_P.svg" />
+<img @ref="whitePieces[10]" hidden id="whiteR" src="assets/White_R.svg" />
+<img @ref="whitePieces[11]" hidden id="whiteS" src="assets/White_S.svg" />
+<img @ref="whitePieces[12]" hidden id="whiteT" src="assets/White_T.svg" />
+<img @ref="whitePieces[13]" hidden id="whiteU" src="assets/White_U.svg" />
+<img @ref="whitePieces[14]" hidden id="whiteW" src="assets/White_W.svg" />
 
 <div class="canvasHolder" id="canvasHolder" @ref="divCanvas" @onclick="OnCanvasClick">
     <BECanvas @ref="myCanvas" Height="@canH" Width="@canW"></BECanvas>
@@ -32,8 +62,10 @@
     const double tiltFctr = 1; // Factor by which the grid is tilted (slope, e.g. 1=45deg)
 
     // These definitions are the default values (they are changed by a re-size)
-    long canH = 570; // Current height/width of canvas
-    long canW = 890;
+    long canH = 570; // Current (effective) height/width of canvas
+    long canW = 890; //    -may be smaller than actual height/width in one dimension
+    double canFullH = 570; // Actual full height/width of canvas
+    double canFullW = 890; //     -used only to erase full canvas
     long gridOffset = 200; // Offset (in pixels) between grids
     int PPS = 60; // Pixels per grid square
 
@@ -42,19 +74,23 @@
     //static int turnPlayerUID;
     //int myUID = 1; // I'm guessing this will be set or replaced by some API call or something
     //static int otherPlayerUID; // May be needed
-    bool p2Perspective = false;
+    bool p2Perspective = true;
 
     ElementReference image1;
-    ElementReference image2;
-    ElementReference image3;
+    ElementReference[] blackPieces = new ElementReference[15];
+    ElementReference[] whitePieces = new ElementReference[15];
+
     readonly Random rand = new();
     private int currentCount;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        ctx = await myCanvas.CreateCanvas2DAsync();
-        await jsRuntime.InvokeAsync<object>("initRenderJS", DotNetObjectReference.Create(this));
-        await base.OnInitializedAsync();
+        if (firstRender)
+        {
+            ctx = await myCanvas.CreateCanvas2DAsync();
+            await jsRuntime.InvokeAsync<object>("initRenderJS", DotNetObjectReference.Create(this));
+            await base.OnInitializedAsync();
+        }
     }
 
     // Re-calculate variables based on the size of the canvas and re-render
@@ -91,15 +127,21 @@
         canH = (int)(2 * gridOffset + PPS * gridH / sqzFctr + 2 * padding);
         canW = (int)(gridW * PPS + tiltFctr * PPS * gridH / sqzFctr + 2 * padding);
 
-        ReRenderGrids(width, height);
+        canFullH = height;
+        canFullW = width;
+
+        ReRenderGrids();
     }
 
-    // Re renders the grid canvas, (todo: including pieces)
-    private async void ReRenderGrids(double width, double height)
+    // Re renders the grid canvas, (TODO: to avoid flickering, use hidden canvas and copy to 'real' canvas after rendering)
+    private async void ReRenderGrids()
     {
         // Clear the canvas
         ctx = await myCanvas.CreateCanvas2DAsync();
-        await ctx.ClearRectAsync(0, 0, width, height);
+        await ctx.ClearRectAsync(0, 0, canFullW, canFullH);
+
+        // Signal the start of a batch of rendering calls
+        await this.ctx.BeginBatchAsync();
 
         // Re-render grids (with black grid lines)
         DrawGrid("Blue", "White", "Black", 0);
@@ -107,19 +149,29 @@
         DrawGrid("Red", "Brown", "Black", 2);
 
         // Draw pieces
-        for (int x=0; x<12; x++)
+        for (int x = 0; x < gridW; x++)
         {
-            for (int y=0; y<8; y++)
+            for (int y = 0; y < gridH; y++)
             {
-                for (int z=0; z<2; z++)
+                for (int z = 0; z < numGrids; z++)
                 {
-                    if (gameBoard[x, y, z] != null)
+                    ChessPiece? piece = gameBoard[x, y, z];
+                    if (piece != null)
                     {
-                        // TODO: Draw the piece's image at (perspectiveX(x), perspectiveY(y), z)
+                        // Draw the piece's image at (perspectiveX(x), perspectiveY(y), z)
+                        ElementReference img = (piece.Owner == PlayerColor.White) ? whitePieces[piece.ImgID] : blackPieces[piece.ImgID];
+                        var coords = transformXY(perspectiveX(x), perspectiveY(y), 2-z);
+                        await ctx.DrawImageAsync(img,
+                                                 coords.tx,
+                                                 coords.ty,
+                                                 PPS - PPS / sqzFctr * tiltFctr,
+                                                 PPS / sqzFctr - 2);
                     }
                 }
             }
         }
+        // Signal the end of the batch of rendering calls (now it all renders at once)
+        await this.ctx.EndBatchAsync();
     }
 
     // Shifts the underlying array x value to the visual x value of the user's perspective and vice versa
@@ -256,10 +308,69 @@
     // Process a click on the given grid coordinates
     // NOTE: x and y are assumed to be visual coordinates (based on user perspective)
     // TODO: implement this function
+    // TODO: test code prints coordinates clicked and places random piece there (if clicked empty square)
     private void ClickXYZ(int x, int y, int z)
     {
         //ctx = await myCanvas.CreateCanvas2DAsync(); // if necessary
-        Console.WriteLine("Clicked here: (" + perspectiveX(x) + ", " + perspectiveY(y) + ", " + z + ")");
+        int px = perspectiveX(x);
+        int py = perspectiveY(y);
+        PlayerColor clr = (rand.Next(2) == 0) ? PlayerColor.White : PlayerColor.Black;
+        if (gameBoard[px,py,z] == null)
+        {
+            int id = 2;// rand.Next(15);
+            switch (id)
+            {
+                case 0:
+                    gameBoard[px, py, z] = new Basilisk(clr, px, py, z);
+                    break;
+                case 1:
+                    gameBoard[px, py, z] = new Cleric(clr, px, py, z);
+                    break;
+                case 2:
+                    gameBoard[px, py, z] = new Dwarf(clr, px, py, z);
+                    break;
+                case 3:
+                    gameBoard[px, py, z] = new Elemental(clr, px, py, z);
+                    break;
+                case 4:
+                    gameBoard[px, py, z] = new Griffon(clr, px, py, z);
+                    break;
+                case 5:
+                    gameBoard[px, py, z] = new Hero(clr, px, py, z);
+                    break;
+                case 6:
+                    gameBoard[px, py, z] = new King(clr, px, py, z);
+                    break;
+                case 7:
+                    gameBoard[px, py, z] = new Mage(clr, px, py, z);
+                    break;
+                case 8:
+                    gameBoard[px, py, z] = new Oliphant(clr, px, py, z);
+                    break;
+                case 9:
+                    gameBoard[px, py, z] = new Paladin(clr, px, py, z);
+                    break;
+                case 10:
+                    gameBoard[px, py, z] = new Dragon(clr, px, py, z);
+                    break;
+                case 11:
+                    gameBoard[px, py, z] = new Sylph(clr, px, py, z);
+                    break;
+                case 12:
+                    gameBoard[px, py, z] = new Thief(clr, px, py, z);
+                    break;
+                case 13:
+                    gameBoard[px, py, z] = new Unicorn(clr, px, py, z);
+                    break;
+                case 14:
+                    gameBoard[px, py, z] = new Warrior(clr, px, py, z);
+                    break;
+                default:
+                    break;
+            }
+        }
+        Console.WriteLine("Clicked here: (" + px + ", " + py + ", " + z + ")");
+        ReRenderGrids();
     }
 
     // Takes in a grid position, and returns pixel coordinates of the upper left corner of that grid position
@@ -275,14 +386,8 @@
     }
 
     // Render the specified grid with the specified colors
-    private async void DrawGrid(string color1, string color2, string lineColor, int gridIndex)
+    private void DrawGrid(string color1, string color2, string lineColor, int gridIndex)
     {
-        // Grab canvas reference
-        ctx = await myCanvas.CreateCanvas2DAsync();
-
-        // Signal the start of a batch of rendering calls
-        await ctx.BeginBatchAsync();
-
         // Loop through each grid and then each grid square
         for (var x = 0; x < gridW; x++)
         {
@@ -292,8 +397,6 @@
                 DrawSquare(x, y, gridIndex, fillColor, lineColor); // Render the square
             }
         }
-        // Signal the end of the batch of rendering calls (now it all renders at once)
-        await ctx.EndBatchAsync();
     }
 
     // Render a specific grid square in the specified colors

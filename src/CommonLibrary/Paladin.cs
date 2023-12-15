@@ -14,6 +14,7 @@ public class Paladin : ChessPiece
 {
     public Paladin(PlayerColor color, int x, int y, int z) : base(color, x, y, z)
     {
+        ImgID = 9;
     }
 
     public override List<Position> ValidMoves(ChessPiece?[,,] board)

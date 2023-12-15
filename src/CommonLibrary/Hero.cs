@@ -12,6 +12,7 @@ public class Hero : ChessPiece
 {
     public Hero(PlayerColor color, int x, int y, int z) : base(color, x, y, z)
     {
+        ImgID = 5;
     }
 
     public override List<Position> ValidMoves(ChessPiece?[,,] board)
