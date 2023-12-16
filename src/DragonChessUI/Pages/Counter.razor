@@ -43,6 +43,10 @@
 <img @ref="whitePieces[13]" hidden id="whiteU" src="assets/White_U.svg" />
 <img @ref="whitePieces[14]" hidden id="whiteW" src="assets/White_W.svg" />
 
+<div class="canvasHolder" hidden id="hiddenCanvasHolder" @ref="divCanvas">
+    <BECanvas @ref="hiddenCanvas" Height="@canH" Width="@canW"></BECanvas>
+</div>
+
 <div class="canvasHolder" id="canvasHolder" @ref="divCanvas" @onclick="OnCanvasClick">
     <BECanvas @ref="myCanvas" Height="@canH" Width="@canW"></BECanvas>
 </div>
@@ -50,6 +54,7 @@
 @code {
     ElementReference divCanvas;
     BECanvasComponent? myCanvas;
+    BECanvasComponent? hiddenCanvas;
     Canvas2DContext? ctx;
     // Constants
     const long minH = 200; // Sample minimum height/width (unused currently)
@@ -87,7 +92,7 @@
     {
         if (firstRender)
         {
-            ctx = await myCanvas.CreateCanvas2DAsync();
+            ctx = await hiddenCanvas.CreateCanvas2DAsync();
             await jsRuntime.InvokeAsync<object>("initRenderJS", DotNetObjectReference.Create(this));
             await base.OnInitializedAsync();
         }
@@ -133,11 +138,11 @@
         ReRenderGrids();
     }
 
-    // Re renders the grid canvas, (TODO: to avoid flickering, use hidden canvas and copy to 'real' canvas after rendering)
+    // Re renders the grid canvas
     private async void ReRenderGrids()
     {
         // Clear the canvas
-        ctx = await myCanvas.CreateCanvas2DAsync();
+        ctx = await hiddenCanvas.CreateCanvas2DAsync();
         await ctx.ClearRectAsync(0, 0, canFullW, canFullH);
 
         // Signal the start of a batch of rendering calls
@@ -172,6 +177,10 @@
         }
         // Signal the end of the batch of rendering calls (now it all renders at once)
         await this.ctx.EndBatchAsync();
+
+        Canvas2DContext? myCtx = await myCanvas.CreateCanvas2DAsync();
+        //call its drawImage() function passing it the source canvas directly
+        await myCtx.DrawImageAsync(ctx.Canvas, 0, 0);
     }
 
     // Shifts the underlying array x value to the visual x value of the user's perspective and vice versa
@@ -311,13 +320,13 @@
     // TODO: test code prints coordinates clicked and places random piece there (if clicked empty square)
     private void ClickXYZ(int x, int y, int z)
     {
-        //ctx = await myCanvas.CreateCanvas2DAsync(); // if necessary
+        //ctx = await hiddenCanvas.CreateCanvas2DAsync(); // if necessary
         int px = perspectiveX(x);
         int py = perspectiveY(y);
         PlayerColor clr = (rand.Next(2) == 0) ? PlayerColor.White : PlayerColor.Black;
         if (gameBoard[px,py,z] == null)
         {
-            int id = 2;// rand.Next(15);
+            int id = rand.Next(15);
             switch (id)
             {
                 case 0:

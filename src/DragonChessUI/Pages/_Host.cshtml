@@ -39,8 +39,14 @@
         return JSON.stringify(obj);
     }
     function resizeCanvas() {
-        let holder = document.getElementById('canvasHolder');
+        let holder = document.getElementById('hiddenCanvasHolder');
         let canvas = holder.querySelector('canvas');
+        if (canvas) {
+            canvas.width = window.innerWidth - canvas.offsetLeft;
+            canvas.height = window.innerHeight - canvas.offsetTop - 7;
+        }
+        holder = document.getElementById('canvasHolder');
+        canvas = holder.querySelector('canvas');
         if (canvas) {
             canvas.width = window.innerWidth - canvas.offsetLeft;
             canvas.height = window.innerHeight - canvas.offsetTop - 7;
