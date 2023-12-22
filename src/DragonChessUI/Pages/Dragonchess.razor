@@ -43,10 +43,6 @@
 <img @ref="whitePieces[13]" hidden id="whiteU" src="assets/White_U.svg" />
 <img @ref="whitePieces[14]" hidden id="whiteW" src="assets/White_W.svg" />
 
-<div class="canvasHolder" hidden id="hiddenCanvasHolder" @ref="divCanvas">
-    <BECanvas @ref="hiddenCanvas" Height="@canH" Width="@canW"></BECanvas>
-</div>
-
 <div class="canvasHolder" id="canvasHolder" @ref="divCanvas" @onclick="OnCanvasClick">
     <BECanvas @ref="myCanvas" Height="@canH" Width="@canW"></BECanvas>
 </div>
@@ -54,7 +50,6 @@
 @code {
     ElementReference divCanvas;
     BECanvasComponent? myCanvas;
-    BECanvasComponent? hiddenCanvas;
     Canvas2DContext? ctx;
     // Constants
     const long minH = 200; // Sample minimum height/width (unused currently)
@@ -93,7 +88,7 @@
     {
         if (firstRender)
         {
-            ctx = await hiddenCanvas.CreateCanvas2DAsync();
+            ctx = await myCanvas.CreateCanvas2DAsync();
             await jsRuntime.InvokeAsync<object>("initRenderJS", DotNetObjectReference.Create(this));
             await base.OnInitializedAsync();
             if (players[0] is null)
@@ -109,7 +104,7 @@
 
     // Re-calculate variables based on the size of the canvas and re-render
     [JSInvokable]
-    public void ResizeInBlazor(double width, double height)
+    public async Task ResizeInBlazor(double width, double height)
     {
         /* Resizing formulas:
         * (gotta calc gridOffset = PPS * (gridH + 2) / sqzFctr)
@@ -144,34 +139,29 @@
         canFullH = height;
         canFullW = width;
 
-        ReRenderGrids();
+        await ReRenderGrids();
     }
 
-    public void ReRenderForAll()
+    public async Task ReRenderForAll()
     {
-        foreach (Dragonchess? p in players)
-        {
-            if (p is not null)
-            {
-                p.ReRenderGrids();
-            }
-        }
+        var tasks = players.Where(x=>x!=null).Select(x=>x!.ReRenderGrids()).ToArray();
+        await Task.WhenAll(tasks);
     }
 
     // Re renders the grid canvas
-    private async void ReRenderGrids()
+    private async Task ReRenderGrids()
     {
         // Clear the canvas
-        ctx = await hiddenCanvas.CreateCanvas2DAsync();
-        await ctx.ClearRectAsync(0, 0, canFullW, canFullH);
+        ctx = await myCanvas.CreateCanvas2DAsync();
 
         // Signal the start of a batch of rendering calls
         await this.ctx.BeginBatchAsync();
+        await ctx.ClearRectAsync(0, 0, canFullW, canFullH);
 
         // Re-render grids (with black grid lines)
-        DrawGrid("Blue", "White", "Black", 0);
-        DrawGrid("Green", "Yellow", "Black", 1);
-        DrawGrid("Red", "Brown", "Black", 2);
+        await DrawGrid("Blue", "White", "Black", 0);
+        await DrawGrid("Green", "Yellow", "Black", 1);
+        await DrawGrid("Red", "Brown", "Black", 2);
 
         // Draw pieces
         for (int x = 0; x < gridW; x++)
@@ -198,9 +188,9 @@
         // Signal the end of the batch of rendering calls (now it all renders at once)
         await this.ctx.EndBatchAsync();
 
-        Canvas2DContext? myCtx = await myCanvas.CreateCanvas2DAsync();
+        //Canvas2DContext? myCtx = await myCanvas.CreateCanvas2DAsync();
         //call its drawImage() function passing it the source canvas directly
-        await myCtx.DrawImageAsync(ctx.Canvas, 0, 0);
+        //await myCtx.DrawImageAsync(ctx.Canvas, 0, 0);
     }
 
     // Shifts the underlying array x value to the visual x value of the user's perspective and vice versa
@@ -230,7 +220,7 @@
     }
 
     // TODO: Remove, this is unused and only here for future reference
-    private async void OnButtonPress()
+    private async Task OnButtonPress()
     {
         // First time: draw grid, afterwards: draw an image to random grid square
         if (currentCount != 0)
@@ -247,15 +237,15 @@
             return;
         }
         // Draw each grid with black grid lines
-        DrawGrid("Blue", "White", "Black", 0);
-        DrawGrid("Green", "Yellow", "Black", 1);
-        DrawGrid("Red", "Brown", "Black", 2);
+        await DrawGrid("Blue", "White", "Black", 0);
+        await DrawGrid("Green", "Yellow", "Black", 1);
+        await DrawGrid("Red", "Brown", "Black", 2);
         currentCount++;
     }
 
     // When a player clicks on the grid, do something about it
     // NOTE: This function has no knowledge of the scroll bar, so it only works if you're scrolled all the way up and left
-    private async void OnCanvasClick(MouseEventArgs eventArgs)
+    private async Task OnCanvasClick(MouseEventArgs eventArgs)
     {
         double mouseX = 0;
         double mouseY = 0;
@@ -330,7 +320,7 @@
             z = 2 - z;
 
             // User clicked on square (x, y, z)
-            ClickXYZ(x, y, z);
+            await ClickXYZ(x, y, z);
         }
     }
 
@@ -338,7 +328,7 @@
     // NOTE: x and y are assumed to be visual coordinates (based on user perspective)
     // TODO: implement this function
     // TODO: test code prints coordinates clicked and places random piece there (if clicked empty square)
-    private void ClickXYZ(int x, int y, int z)
+    private async Task ClickXYZ(int x, int y, int z)
     {
         //ctx = await hiddenCanvas.CreateCanvas2DAsync(); // if necessary
         int px = perspectiveX(x);
@@ -400,7 +390,7 @@
         }
         Console.WriteLine("Clicked here: (" + px + ", " + py + ", " + z + ")");
         //ReRenderGrids();
-        ReRenderForAll();
+        await ReRenderForAll();
     }
 
     // Takes in a grid position, and returns pixel coordinates of the upper left corner of that grid position
@@ -416,7 +406,7 @@
     }
 
     // Render the specified grid with the specified colors
-    private void DrawGrid(string color1, string color2, string lineColor, int gridIndex)
+    private async Task DrawGrid(string color1, string color2, string lineColor, int gridIndex)
     {
         // Loop through each grid and then each grid square
         for (var x = 0; x < gridW; x++)
@@ -424,13 +414,13 @@
             for (var y = 0; y < gridH; y++)
             {
                 var fillColor = (x + y) % 2 == 1 ? color1 : color2; // Find the right color for this square
-                DrawSquare(x, y, gridIndex, fillColor, lineColor); // Render the square
+                await DrawSquare(x, y, gridIndex, fillColor, lineColor); // Render the square
             }
         }
     }
 
     // Render a specific grid square in the specified colors
-    private async void DrawSquare(int x, int y, int gridIndex, string fillColor, string lineColor)
+    private async Task DrawSquare(int x, int y, int gridIndex, string fillColor, string lineColor)
     {
         if (ctx == null)
         {
