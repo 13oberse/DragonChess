@@ -1,4 +1,4 @@
-﻿@page "/counter"
+﻿@page "/Dragonchess"
 @using Blazor.Extensions
 @using Blazor.Extensions.Canvas
 @using Blazor.Extensions.Canvas.Canvas2D
@@ -6,7 +6,7 @@
 @using Newtonsoft.Json
 @inject IJSRuntime jsRuntime
 
-<PageTitle>Counter</PageTitle>
+<PageTitle>Dragonchess</PageTitle>
 
 <!-- Hidden images to render later -->
 <img @ref="image1" hidden id="image1" src="assets/Italic_D.svg" />
@@ -80,6 +80,7 @@
     //int myUID = 1; // I'm guessing this will be set or replaced by some API call or something
     //static int otherPlayerUID; // May be needed
     bool p2Perspective = true;
+    static Dragonchess?[] players = new Dragonchess[2];
 
     ElementReference image1;
     ElementReference[] blackPieces = new ElementReference[15];
@@ -95,6 +96,14 @@
             ctx = await hiddenCanvas.CreateCanvas2DAsync();
             await jsRuntime.InvokeAsync<object>("initRenderJS", DotNetObjectReference.Create(this));
             await base.OnInitializedAsync();
+            if (players[0] is null)
+            {
+                players[0] = this;
+            }
+            else if (players[1] is null)
+            {
+                players[1] = this;
+            }
         }
     }
 
@@ -136,6 +145,17 @@
         canFullW = width;
 
         ReRenderGrids();
+    }
+
+    public void ReRenderForAll()
+    {
+        foreach (Dragonchess? p in players)
+        {
+            if (p is not null)
+            {
+                p.ReRenderGrids();
+            }
+        }
     }
 
     // Re renders the grid canvas
@@ -379,7 +399,8 @@
             }
         }
         Console.WriteLine("Clicked here: (" + px + ", " + py + ", " + z + ")");
-        ReRenderGrids();
+        //ReRenderGrids();
+        ReRenderForAll();
     }
 
     // Takes in a grid position, and returns pixel coordinates of the upper left corner of that grid position
