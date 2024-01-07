@@ -70,11 +70,11 @@
     int PPS = 60; // Pixels per grid square
 
     // Game variables
-    static ChessPiece?[,,] gameBoard = new ChessPiece[gridW, gridH, numGrids];
+    static GameManager gameMgr = new GameManager();
     //static int turnPlayerUID;
     //int myUID = 1; // I'm guessing this will be set or replaced by some API call or something
     //static int otherPlayerUID; // May be needed
-    bool p2Perspective = true;
+    bool p2Perspective = false;
     static Dragonchess?[] players = new Dragonchess[2];
 
     ElementReference image1;
@@ -94,10 +94,12 @@
             if (players[0] is null)
             {
                 players[0] = this;
+                gameMgr.ResetBoard();
             }
             else if (players[1] is null)
             {
                 players[1] = this;
+                p2Perspective = true;
             }
         }
     }
@@ -144,8 +146,22 @@
 
     public async Task ReRenderForAll()
     {
-        var tasks = players.Where(x=>x!=null).Select(x=>x!.ReRenderGrids()).ToArray();
-        await Task.WhenAll(tasks);
+        for (int i=0; i<players.Length; i++)
+        {
+            if (players[i] != null)
+            {
+                try
+                {
+                    await players[i]!.ReRenderGrids();
+                }
+                catch
+                {
+                    players[i] = null;
+                }
+            }
+        }
+        //var tasks = players.Where(x=>x!=null).Select(x=>x!.ReRenderGrids()).ToArray();
+        //await Task.WhenAll(tasks);
     }
 
     // Re renders the grid canvas
@@ -170,7 +186,7 @@
             {
                 for (int z = 0; z < numGrids; z++)
                 {
-                    ChessPiece? piece = gameBoard[x, y, z];
+                    ChessPiece? piece = gameMgr.GetPiece(x, y, z);
                     if (piece != null)
                     {
                         // Draw the piece's image at (perspectiveX(x), perspectiveY(y), z)
@@ -187,10 +203,6 @@
         }
         // Signal the end of the batch of rendering calls (now it all renders at once)
         await this.ctx.EndBatchAsync();
-
-        //Canvas2DContext? myCtx = await myCanvas.CreateCanvas2DAsync();
-        //call its drawImage() function passing it the source canvas directly
-        //await myCtx.DrawImageAsync(ctx.Canvas, 0, 0);
     }
 
     // Shifts the underlying array x value to the visual x value of the user's perspective and vice versa
@@ -334,55 +346,56 @@
         int px = perspectiveX(x);
         int py = perspectiveY(y);
         PlayerColor clr = (rand.Next(2) == 0) ? PlayerColor.White : PlayerColor.Black;
-        if (gameBoard[px,py,z] == null)
+        ChessPiece? piece = gameMgr.GetPiece(px, py, z);
+        if (piece == null)
         {
             int id = rand.Next(15);
             switch (id)
             {
                 case 0:
-                    gameBoard[px, py, z] = new Basilisk(clr, px, py, z);
+                    gameMgr.SetPiece(new Basilisk(clr, px, py, z), px, py, z);
                     break;
                 case 1:
-                    gameBoard[px, py, z] = new Cleric(clr, px, py, z);
+                    gameMgr.SetPiece(new Cleric(clr, px, py, z), px, py, z);
                     break;
                 case 2:
-                    gameBoard[px, py, z] = new Dwarf(clr, px, py, z);
+                    gameMgr.SetPiece(new Dwarf(clr, px, py, z), px, py, z);
                     break;
                 case 3:
-                    gameBoard[px, py, z] = new Elemental(clr, px, py, z);
+                    gameMgr.SetPiece(new Elemental(clr, px, py, z), px, py, z);
                     break;
                 case 4:
-                    gameBoard[px, py, z] = new Griffon(clr, px, py, z);
+                    gameMgr.SetPiece(new Griffon(clr, px, py, z), px, py, z);
                     break;
                 case 5:
-                    gameBoard[px, py, z] = new Hero(clr, px, py, z);
+                    gameMgr.SetPiece(new Hero(clr, px, py, z), px, py, z);
                     break;
                 case 6:
-                    gameBoard[px, py, z] = new King(clr, px, py, z);
+                    gameMgr.SetPiece(new King(clr, px, py, z), px, py, z);
                     break;
                 case 7:
-                    gameBoard[px, py, z] = new Mage(clr, px, py, z);
+                    gameMgr.SetPiece(new Mage(clr, px, py, z), px, py, z);
                     break;
                 case 8:
-                    gameBoard[px, py, z] = new Oliphant(clr, px, py, z);
+                    gameMgr.SetPiece(new Oliphant(clr, px, py, z), px, py, z);
                     break;
                 case 9:
-                    gameBoard[px, py, z] = new Paladin(clr, px, py, z);
+                    gameMgr.SetPiece(new Paladin(clr, px, py, z), px, py, z);
                     break;
                 case 10:
-                    gameBoard[px, py, z] = new Dragon(clr, px, py, z);
+                    gameMgr.SetPiece(new Dragon(clr, px, py, z), px, py, z);
                     break;
                 case 11:
-                    gameBoard[px, py, z] = new Sylph(clr, px, py, z);
+                    gameMgr.SetPiece(new Sylph(clr, px, py, z), px, py, z);
                     break;
                 case 12:
-                    gameBoard[px, py, z] = new Thief(clr, px, py, z);
+                    gameMgr.SetPiece(new Thief(clr, px, py, z), px, py, z);
                     break;
                 case 13:
-                    gameBoard[px, py, z] = new Unicorn(clr, px, py, z);
+                    gameMgr.SetPiece(new Unicorn(clr, px, py, z), px, py, z);
                     break;
                 case 14:
-                    gameBoard[px, py, z] = new Warrior(clr, px, py, z);
+                    gameMgr.SetPiece(new Warrior(clr, px, py, z), px, py, z);
                     break;
                 default:
                     break;
