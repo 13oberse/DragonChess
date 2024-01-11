@@ -172,28 +172,33 @@ public class GameManager
     }
 
     // Applies the indicated move. Returns true if game over
-    // NOTE: Currently does not check if move ends game
     public bool DoMove(ChessPiece piece, int x, int y, int z)
     {
         if (piece.ValidMoves(board).Contains(new Position(x, y, z)))
         {
             piece.MoveTo(board, x, y, z);
             ToggleTurnPlayer();
-            // TODO: Check for game over
+            return MateCheck();
         }
         return false;
     }
 
     // Applies the indicated capture. Returns true if game over
-    // NOTE: Currently does not check if move is valid
     public bool DoRemoteCapture(ChessPiece piece, int x, int y, int z)
     {
         if (piece.RemoteCaptures(board).Contains(new Position(x, y, z)))
         {
             board[x, y, z] = null;
             ToggleTurnPlayer();
-            // TODO: Check for game over
+            return MateCheck();
         }
+        return false;
+    }
+
+    // Check for a checkmate
+    // TODO: implement
+    private bool MateCheck()
+    {
         return false;
     }
 

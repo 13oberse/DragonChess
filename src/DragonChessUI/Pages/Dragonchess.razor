@@ -399,19 +399,25 @@
         }
         else // It's my turn and I've already highlighted one of my pieces and clicked a highlighted spot
         {
+            bool mate = false;
             // Do the indicated move
             if (remoteCapturePositions.Contains(new Position(x, y, z)))
             {
-                gameMgr.DoRemoteCapture(highlightedPiece, x, y, z);
+                mate = gameMgr.DoRemoteCapture(highlightedPiece, x, y, z);
             }
             if (movePositions.Contains(new Position(x, y, z)))
             {
-                gameMgr.DoMove(highlightedPiece, x, y, z);
+                mate = gameMgr.DoMove(highlightedPiece, x, y, z);
             }
             // Remove highlighting
             highlightedPiece = null;
             movePositions = new List<Position>();
             remoteCapturePositions = new List<Position>();
+
+            if (mate)
+            {
+                // End of game
+            }
 
             // Rerender for all clients, as game state has updated
             await ReRenderForAll();
