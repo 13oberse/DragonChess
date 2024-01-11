@@ -3,7 +3,8 @@ namespace DragonChess.CommonLibrary;
 public enum PlayerColor : byte
 {
     White,
-    Black
+    Black,
+    None
 }
 
 public enum MoveType : byte

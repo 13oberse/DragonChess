@@ -5,7 +5,33 @@ namespace DragonChess.CommonLibrary;
 
 public class GameManager
 {
-    private ChessPiece?[,,] board = new ChessPiece[12, 8, 3];
+    private static ChessPiece?[,,] board = new ChessPiece[12, 8, 3];
+
+    private static PlayerColor turnPlayer = PlayerColor.White;
+
+    public ChessPiece? GetPiece(int x, int y, int z)
+    {
+        if (x is < 0 or > 11 || y is < 0 or > 7 || z is < 0 or > 2)
+        {
+            return null;
+        }
+        return board[x, y, z];
+    }
+
+    public void SetPiece(ChessPiece piece, int x, int y, int z)
+    {
+        if (x is < 0 or > 11 || y is < 0 or > 7 || z is < 0 or > 2)
+        {
+            return;
+        }
+        board[x, y, z] = piece;
+    }
+
+    public PlayerColor GetTurnPlayer()
+    {
+        return turnPlayer;
+    }
+
     public void ResetBoard()
     {
         for (int x=0; x<12; x++)
@@ -117,21 +143,69 @@ public class GameManager
         board[11, 6, 0] = new Dwarf(PlayerColor.Black, 11, 6, 0);
     }
 
-    public ChessPiece? GetPiece(int x, int y, int z)
+    public List<Position> GetMoves(int x, int y, int z)
     {
         if (x is < 0 or > 11 || y is < 0 or > 7 || z is < 0 or > 2)
         {
-            return null;
+            return new List<Position>();
         }
-        return board[x, y, z];
+        ChessPiece? piece = board[x, y, z];
+        if (piece != null)
+        {
+            return piece.ValidMoves(board);
+        }
+        return new List<Position>();
     }
 
-    public void SetPiece(ChessPiece piece, int x, int y, int z)
+    public List<Position> GetRemoteCaptures(int x, int y, int z)
     {
         if (x is < 0 or > 11 || y is < 0 or > 7 || z is < 0 or > 2)
         {
-            return;
+            return new List<Position>();
         }
-        board[x, y, z] = piece;
+        ChessPiece? piece = board[x, y, z];
+        if (piece != null)
+        {
+            return piece.RemoteCaptures(board);
+        }
+        return new List<Position>();
+    }
+
+    // Applies the indicated move. Returns true if game over
+    // NOTE: Currently does not check if move ends game
+    public bool DoMove(ChessPiece piece, int x, int y, int z)
+    {
+        if (piece.ValidMoves(board).Contains(new Position(x, y, z)))
+        {
+            piece.MoveTo(board, x, y, z);
+            ToggleTurnPlayer();
+            // TODO: Check for game over
+        }
+        return false;
+    }
+
+    // Applies the indicated capture. Returns true if game over
+    // NOTE: Currently does not check if move is valid
+    public bool DoRemoteCapture(ChessPiece piece, int x, int y, int z)
+    {
+        if (piece.RemoteCaptures(board).Contains(new Position(x, y, z)))
+        {
+            board[x, y, z] = null;
+            ToggleTurnPlayer();
+            // TODO: Check for game over
+        }
+        return false;
+    }
+
+    private void ToggleTurnPlayer()
+    {
+        if (turnPlayer == PlayerColor.White)
+        {
+            turnPlayer = PlayerColor.Black;
+        }
+        else
+        {
+            turnPlayer = PlayerColor.White;
+        }
     }
 }

@@ -20,7 +20,7 @@ public class Dragon : ChessPiece
     public override List<Position> ValidMoves(ChessPiece?[,,] board)
     {
         var moves = new List<Position>();
-        if (Immobile || Position.Z != 2)
+        if (Position.Z != 2 || IsImmobilized(board))
         {
             return moves; // Immobile or illegal position
         }
@@ -68,7 +68,7 @@ public class Dragon : ChessPiece
     public override List<Position> RemoteCaptures(ChessPiece?[,,] board)
     {
         var moves = new List<Position>();
-        if (Immobile)
+        if (IsImmobilized(board))
         {
             return moves;
         }

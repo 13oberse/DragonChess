@@ -17,7 +17,7 @@ public class Oliphant : ChessPiece
     {
         var moves = new List<Position>();
         /* Check for mobility/valid position */
-        if (Immobile || Position.Z != 1)
+        if (Position.Z != 1 || IsImmobilized(board))
         {
             return moves;
         }

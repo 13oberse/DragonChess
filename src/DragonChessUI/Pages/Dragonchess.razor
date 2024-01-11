@@ -71,11 +71,13 @@
 
     // Game variables
     static GameManager gameMgr = new GameManager();
-    //static int turnPlayerUID;
-    //int myUID = 1; // I'm guessing this will be set or replaced by some API call or something
-    //static int otherPlayerUID; // May be needed
-    bool p2Perspective = false;
     static Dragonchess?[] players = new Dragonchess[2];
+
+    List<Position> movePositions = new List<Position>();
+    List<Position> remoteCapturePositions = new List<Position>();
+    ChessPiece? highlightedPiece = null;
+
+    bool p2Perspective = false;
 
     ElementReference image1;
     ElementReference[] blackPieces = new ElementReference[15];
@@ -197,10 +199,30 @@
                                                  coords.ty,
                                                  PPS - PPS / sqzFctr * tiltFctr,
                                                  PPS / sqzFctr - 2);
+                        // If highlighted piece, highlight
+                        if (piece.Equals(highlightedPiece))
+                        {
+                            await DrawSquare(perspectiveX(x), perspectiveY(y), 2 - z, "Green", "Green", 0.5f);
+                            // Reset alpha value
+                            await ctx.SetGlobalAlphaAsync(1.0f);
+                        }
                     }
                 }
             }
         }
+
+        // Highlight valid moves
+        foreach (Position position in movePositions)
+        {
+            await DrawSquare(perspectiveX(position.X), perspectiveY(position.Y), 2-position.Z, "Yellow", "Yellow", 0.5f);
+        }
+
+        // Highlight valid remote captures
+        foreach (Position position in remoteCapturePositions)
+        {
+            await DrawSquare(perspectiveX(position.X), perspectiveY(position.Y), 2-position.Z, "Red", "Red", 0.5f);
+        }
+
         // Signal the end of the batch of rendering calls (now it all renders at once)
         await this.ctx.EndBatchAsync();
     }
@@ -331,79 +353,81 @@
             // Invert z, because the top grid should be z=2
             z = 2 - z;
 
-            // User clicked on square (x, y, z)
-            await ClickXYZ(x, y, z);
+            // User clicked on square (x, y, z) (corrected for user perspective)
+            await ClickXYZ(perspectiveX(x), perspectiveY(y), z);
         }
     }
 
     // Process a click on the given grid coordinates
-    // NOTE: x and y are assumed to be visual coordinates (based on user perspective)
-    // TODO: implement this function
+    // NOTE: x and y are board coordinates (irrelevant of user perspective)
     // TODO: test code prints coordinates clicked and places random piece there (if clicked empty square)
     private async Task ClickXYZ(int x, int y, int z)
     {
         //ctx = await hiddenCanvas.CreateCanvas2DAsync(); // if necessary
-        int px = perspectiveX(x);
-        int py = perspectiveY(y);
-        PlayerColor clr = (rand.Next(2) == 0) ? PlayerColor.White : PlayerColor.Black;
-        ChessPiece? piece = gameMgr.GetPiece(px, py, z);
-        if (piece == null)
+        ChessPiece? piece = gameMgr.GetPiece(x, y, z);
+        PlayerColor turnPlayer = gameMgr.GetTurnPlayer();
+        bool myTurn = this.Equals(players[(int)turnPlayer]);
+        PlayerColor myColor = this.Equals(players[0]) ? PlayerColor.White : PlayerColor.Black;
+
+        if (piece != null && piece.Equals(highlightedPiece))
         {
-            int id = rand.Next(15);
-            switch (id)
-            {
-                case 0:
-                    gameMgr.SetPiece(new Basilisk(clr, px, py, z), px, py, z);
-                    break;
-                case 1:
-                    gameMgr.SetPiece(new Cleric(clr, px, py, z), px, py, z);
-                    break;
-                case 2:
-                    gameMgr.SetPiece(new Dwarf(clr, px, py, z), px, py, z);
-                    break;
-                case 3:
-                    gameMgr.SetPiece(new Elemental(clr, px, py, z), px, py, z);
-                    break;
-                case 4:
-                    gameMgr.SetPiece(new Griffon(clr, px, py, z), px, py, z);
-                    break;
-                case 5:
-                    gameMgr.SetPiece(new Hero(clr, px, py, z), px, py, z);
-                    break;
-                case 6:
-                    gameMgr.SetPiece(new King(clr, px, py, z), px, py, z);
-                    break;
-                case 7:
-                    gameMgr.SetPiece(new Mage(clr, px, py, z), px, py, z);
-                    break;
-                case 8:
-                    gameMgr.SetPiece(new Oliphant(clr, px, py, z), px, py, z);
-                    break;
-                case 9:
-                    gameMgr.SetPiece(new Paladin(clr, px, py, z), px, py, z);
-                    break;
-                case 10:
-                    gameMgr.SetPiece(new Dragon(clr, px, py, z), px, py, z);
-                    break;
-                case 11:
-                    gameMgr.SetPiece(new Sylph(clr, px, py, z), px, py, z);
-                    break;
-                case 12:
-                    gameMgr.SetPiece(new Thief(clr, px, py, z), px, py, z);
-                    break;
-                case 13:
-                    gameMgr.SetPiece(new Unicorn(clr, px, py, z), px, py, z);
-                    break;
-                case 14:
-                    gameMgr.SetPiece(new Warrior(clr, px, py, z), px, py, z);
-                    break;
-                default:
-                    break;
-            }
+            // Remove highlighting
+            highlightedPiece = null;
+            movePositions = new List<Position>();
+            remoteCapturePositions = new List<Position>();
+            // Only rerender the current client
+            await ReRenderGrids();
         }
-        Console.WriteLine("Clicked here: (" + px + ", " + py + ", " + z + ")");
-        //ReRenderGrids();
-        await ReRenderForAll();
+        else if (!myTurn || highlightedPiece == null || highlightedPiece.Owner != myColor || !IsHighlighted(x, y, z))
+        {
+            if (piece == null)
+            {
+                // Remove highlighting
+                highlightedPiece = null;
+                movePositions = new List<Position>();
+                remoteCapturePositions = new List<Position>();
+            }
+            else
+            {
+                // Highlight this new piece
+                highlightedPiece = piece;
+                movePositions = gameMgr.GetMoves(x, y, z);
+                remoteCapturePositions = gameMgr.GetRemoteCaptures(x, y, z);
+            }
+            // Only rerender the current client
+            await ReRenderGrids();
+        }
+        else // It's my turn and I've already highlighted one of my pieces and clicked a highlighted spot
+        {
+            // Do the indicated move
+            if (remoteCapturePositions.Contains(new Position(x, y, z)))
+            {
+                gameMgr.DoRemoteCapture(highlightedPiece, x, y, z);
+            }
+            if (movePositions.Contains(new Position(x, y, z)))
+            {
+                gameMgr.DoMove(highlightedPiece, x, y, z);
+            }
+            // Remove highlighting
+            highlightedPiece = null;
+            movePositions = new List<Position>();
+            remoteCapturePositions = new List<Position>();
+
+            // Rerender for all clients, as game state has updated
+            await ReRenderForAll();
+        }
+        Console.WriteLine("Clicked here: (" + x + ", " + y + ", " + z + ")");
+    }
+
+    // Returns true if the indicated square is currently highlighted (in either color)
+    private bool IsHighlighted(int x, int y, int z)
+    {
+        if (movePositions.Contains(new Position(x, y, z)) ||
+            remoteCapturePositions.Contains(new Position(x, y, z)))
+            {
+                return true;
+            }
+        return false;
     }
 
     // Takes in a grid position, and returns pixel coordinates of the upper left corner of that grid position
@@ -427,13 +451,13 @@
             for (var y = 0; y < gridH; y++)
             {
                 var fillColor = (x + y) % 2 == 1 ? color1 : color2; // Find the right color for this square
-                await DrawSquare(x, y, gridIndex, fillColor, lineColor); // Render the square
+                await DrawSquare(x, y, gridIndex, fillColor, lineColor, 1.0f); // Render the square
             }
         }
     }
 
     // Render a specific grid square in the specified colors
-    private async Task DrawSquare(int x, int y, int gridIndex, string fillColor, string lineColor)
+    private async Task DrawSquare(int x, int y, int gridIndex, string fillColor, string lineColor, float alpha)
     {
         if (ctx == null)
         {
@@ -441,6 +465,7 @@
         }
         // Set stroke style and begin path
         await ctx.SetStrokeStyleAsync(lineColor);
+        await ctx.SetGlobalAlphaAsync(alpha);
         await ctx.SetLineWidthAsync(3);
         await ctx.BeginPathAsync();
 

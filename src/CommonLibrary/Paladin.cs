@@ -20,7 +20,7 @@ public class Paladin : ChessPiece
     public override List<Position> ValidMoves(ChessPiece?[,,] board)
     {
         var moves = new List<Position>();
-        if (Immobile)
+        if (IsImmobilized(board))
         {
             return moves;
         }

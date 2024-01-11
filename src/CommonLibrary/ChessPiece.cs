@@ -1,10 +1,10 @@
+using System;
 using System.Collections.Generic;
 
 namespace DragonChess.CommonLibrary;
 
 public abstract class ChessPiece
 {
-    public bool Immobile { get; set; }
     public Position Position { get; set; }
     public Position LastPosition { get; set; }
 
@@ -78,5 +78,15 @@ public abstract class ChessPiece
 
         /* return true if position is empty */
         return positionToCheck == null;
+    }
+
+    protected bool IsImmobilized(ChessPiece?[,,] board)
+    {
+        if (Position.Z == 0)
+            return false;
+        ChessPiece? piece = board[Position.X, Position.Y, Position.Z - 1];
+        if (piece == null)
+            return false;
+        return piece.GetType().Equals(typeof(Basilisk)) && piece.Owner != Owner;
     }
 }

@@ -21,7 +21,7 @@ public class Basilisk : ChessPiece
     {
         var moves = new List<Position>();
         /* Check for mobility/valid position */
-        if (Immobile || Position.Z != 0)
+        if (Position.Z != 0 || IsImmobilized(board))
         {
             return moves;
         }
@@ -42,24 +42,5 @@ public class Basilisk : ChessPiece
         CheckMove(board, moves, Position.X, lastYLine, 0, MoveType.MoveOnly);
 
         return moves;
-    }
-
-    public override void MoveTo(ChessPiece?[,,] board, int x, int y, int z)
-    {
-        /* Call base ChessPiece.MoveTo function for normal functionality */
-        base.MoveTo(board, x, y, z);
-
-        // Immobilize/re-mobilize pieces
-        ChessPiece? piece = board[LastPosition.X, LastPosition.Y, LastPosition.Z + 1];
-        if (piece != null)
-        {
-            piece.Immobile = false;
-        }
-
-        piece = board[Position.X, Position.Y, Position.Z + 1];
-        if (piece != null)
-        {
-            piece.Immobile = true;
-        }
     }
 }

@@ -20,7 +20,7 @@ public class Dwarf : ChessPiece
     {
         var moves = new List<Position>();
         /* Check for mobility/valid position */
-        if (Immobile || Position.Z == 2)
+        if (Position.Z == 2 || IsImmobilized(board))
         {
             return moves;
         }

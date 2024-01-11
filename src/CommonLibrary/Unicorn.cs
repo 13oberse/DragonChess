@@ -16,7 +16,7 @@ public class Unicorn : ChessPiece
     public override List<Position> ValidMoves(ChessPiece?[,,] board)
     {
         var moves = new List<Position>();
-        if (Immobile || Position.Z != 1)
+        if (Position.Z != 1 || IsImmobilized(board))
         {
             return moves; // Immobile or illegal position
         }
