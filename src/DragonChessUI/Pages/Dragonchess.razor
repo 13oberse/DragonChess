@@ -71,7 +71,7 @@
 
     // Game variables
     static GameManager gameMgr = new GameManager();
-    static Dragonchess?[] players = new Dragonchess[2];
+    static Dragonchess?[] players = new Dragonchess[20];
 
     List<Position> movePositions = new List<Position>();
     List<Position> remoteCapturePositions = new List<Position>();
@@ -227,6 +227,36 @@
         await this.ctx.EndBatchAsync();
     }
 
+    // Logic for reset button
+    private async void resetButton()
+    {
+        int playerNum = -1;
+        for (int i = 0; i < players.Length; i++)
+        {
+            if (this.Equals(players[0]))
+            {
+                playerNum = i;
+                break;
+            }
+        }
+        if (playerNum == 0 || playerNum == 1)
+        {
+            gameMgr.ResetBoard();
+        }
+        else if (playerNum >= 2)
+        {
+            // Rerender to update player list
+            await ReRenderForAll();
+            if (players[0] == null && players[1] == null)
+            {
+                // if both players are gone, become player 1
+                players[playerNum] = null;
+                players[0] = this;
+                gameMgr.ResetBoard();
+            }
+        }
+    }
+
     // Shifts the underlying array x value to the visual x value of the user's perspective and vice versa
     private int perspectiveX(int x)
     {
@@ -360,7 +390,7 @@
 
     // Process a click on the given grid coordinates
     // NOTE: x and y are board coordinates (irrelevant of user perspective)
-    // TODO: test code prints coordinates clicked and places random piece there (if clicked empty square)
+    // TODO: check/mate when GameManager supports it
     private async Task ClickXYZ(int x, int y, int z)
     {
         //ctx = await hiddenCanvas.CreateCanvas2DAsync(); // if necessary
