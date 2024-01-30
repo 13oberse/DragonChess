@@ -43,12 +43,16 @@
 <img @ref="whitePieces[13]" hidden id="whiteU" src="assets/White_U.svg" />
 <img @ref="whitePieces[14]" hidden id="whiteW" src="assets/White_W.svg" />
 
+<!-- Hidden reset button to add to top-row -->
+<button type="button" @ref="resetButtonRef" hidden @onclick="resetButton">Reset</button>
+
 <div class="canvasHolder" id="canvasHolder" @ref="divCanvas" @onclick="OnCanvasClick">
     <BECanvas @ref="myCanvas" Height="@canH" Width="@canW"></BECanvas>
 </div>
 
 @code {
     ElementReference divCanvas;
+    ElementReference resetButtonRef;
     BECanvasComponent? myCanvas;
     Canvas2DContext? ctx;
     // Constants
@@ -90,6 +94,9 @@
     {
         if (firstRender)
         {
+            // Add reset button to top-row div
+            await jsRuntime.InvokeAsync<object>("addResetButton", resetButtonRef);
+
             ctx = await myCanvas.CreateCanvas2DAsync();
             await jsRuntime.InvokeAsync<object>("initRenderJS", DotNetObjectReference.Create(this));
             await base.OnInitializedAsync();
@@ -242,6 +249,7 @@
         if (playerNum == 0 || playerNum == 1)
         {
             gameMgr.ResetBoard();
+            await ReRenderForAll();
         }
         else if (playerNum >= 2)
         {
@@ -253,6 +261,7 @@
                 players[playerNum] = null;
                 players[0] = this;
                 gameMgr.ResetBoard();
+                await ReRenderForAll();
             }
         }
     }
@@ -283,31 +292,7 @@
         }
     }
 
-    // TODO: Remove, this is unused and only here for future reference
-    private async Task OnButtonPress()
-    {
-        // First time: draw grid, afterwards: draw an image to random grid square
-        if (currentCount != 0)
-        {
-            // Get reference to canvas
-            ctx = await myCanvas.CreateCanvas2DAsync();
-            // Get random grid locations
-            var gridX = rand.Next(gridW);
-            var gridY = rand.Next(gridH);
-            var gridZ = rand.Next(numGrids);
-            // Get pixel coords and draw a correctly scaled image there
-            var coords = transformXY(gridX, gridY, gridZ);
-            await ctx.DrawImageAsync(image1, coords.tx, coords.ty, PPS - PPS / sqzFctr * tiltFctr, PPS / sqzFctr);
-            return;
-        }
-        // Draw each grid with black grid lines
-        await DrawGrid("Blue", "White", "Black", 0);
-        await DrawGrid("Green", "Yellow", "Black", 1);
-        await DrawGrid("Red", "Brown", "Black", 2);
-        currentCount++;
-    }
-
-    // When a player clicks on the grid, do something about it
+      // When a player clicks on the grid, do something about it
     // NOTE: This function has no knowledge of the scroll bar, so it only works if you're scrolled all the way up and left
     private async Task OnCanvasClick(MouseEventArgs eventArgs)
     {

@@ -52,6 +52,12 @@
         window.addEventListener("resize", resizeCanvas);
         resizeCanvas();
     };
+    function addResetButton(buttonRef) {
+        let topRow = document.getElementById('topRow');
+        let node = topRow.lastElementChild;
+        buttonRef.hidden = false;
+        topRow.insertBefore(buttonRef, node);
+    }
 </script>
 </body>
 </html>

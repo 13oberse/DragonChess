@@ -45,6 +45,9 @@ public class GameManager
             }
         }
 
+        // Reset turn player
+        turnPlayer = PlayerColor.White;
+
         // White pieces (sky)
         board[2, 0, 2] = new Griffon(PlayerColor.White, 2, 0, 2);
         board[6, 0, 2] = new Dragon(PlayerColor.White, 6, 0, 2);
