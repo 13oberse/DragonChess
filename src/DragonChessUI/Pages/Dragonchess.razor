@@ -43,8 +43,9 @@
 <img @ref="whitePieces[13]" hidden id="whiteU" src="assets/White_U.svg" />
 <img @ref="whitePieces[14]" hidden id="whiteW" src="assets/White_W.svg" />
 
-<!-- Hidden reset button to add to top-row -->
+<!-- Hidden elements to add to top-row -->
 <button type="button" @ref="resetButtonRef" hidden @onclick="resetButton">Reset</button>
+<h3 @ref="turnIndicatorRef" hidden>White's Turn</h3>
 
 <div class="canvasHolder" id="canvasHolder" @ref="divCanvas" @onclick="OnCanvasClick">
     <BECanvas @ref="myCanvas" Height="@canH" Width="@canW"></BECanvas>
@@ -53,6 +54,7 @@
 @code {
     ElementReference divCanvas;
     ElementReference resetButtonRef;
+    ElementReference turnIndicatorRef;
     BECanvasComponent? myCanvas;
     Canvas2DContext? ctx;
     // Constants
@@ -87,15 +89,12 @@
     ElementReference[] blackPieces = new ElementReference[15];
     ElementReference[] whitePieces = new ElementReference[15];
 
-    readonly Random rand = new();
-    private int currentCount;
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             // Add reset button to top-row div
-            await jsRuntime.InvokeAsync<object>("addResetButton", resetButtonRef);
+            await jsRuntime.InvokeAsync<object>("addResetButton", resetButtonRef, turnIndicatorRef);
 
             ctx = await myCanvas.CreateCanvas2DAsync();
             await jsRuntime.InvokeAsync<object>("initRenderJS", DotNetObjectReference.Create(this));
@@ -169,13 +168,15 @@
                 }
             }
         }
-        //var tasks = players.Where(x=>x!=null).Select(x=>x!.ReRenderGrids()).ToArray();
-        //await Task.WhenAll(tasks);
     }
 
     // Re renders the grid canvas
     private async Task ReRenderGrids()
     {
+        // Update turn indicator
+        string turnText = (gameMgr.GetTurnPlayer() == PlayerColor.White) ? "White's Turn" : "Black's Turn";
+        await jsRuntime.InvokeAsync<object>("updateText", turnIndicatorRef, turnText);
+
         // Clear the canvas
         ctx = await myCanvas.CreateCanvas2DAsync();
 
@@ -292,7 +293,7 @@
         }
     }
 
-      // When a player clicks on the grid, do something about it
+    // When a player clicks on the grid, do something about it
     // NOTE: This function has no knowledge of the scroll bar, so it only works if you're scrolled all the way up and left
     private async Task OnCanvasClick(MouseEventArgs eventArgs)
     {
@@ -429,6 +430,8 @@
             movePositions = new List<Position>();
             remoteCapturePositions = new List<Position>();
 
+            // Change turn indicator if in check/mate?
+
             if (mate)
             {
                 // End of game
@@ -437,7 +440,7 @@
             // Rerender for all clients, as game state has updated
             await ReRenderForAll();
         }
-        Console.WriteLine("Clicked here: (" + x + ", " + y + ", " + z + ")");
+        //Console.WriteLine("Clicked here: (" + x + ", " + y + ", " + z + ")");
     }
 
     // Returns true if the indicated square is currently highlighted (in either color)
