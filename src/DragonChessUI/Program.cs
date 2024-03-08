@@ -1,5 +1,6 @@
 using DragonChessUI.Data;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
@@ -10,7 +11,13 @@ public static class Program
 {
     public static async Task Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(new WebApplicationOptions()
+        {
+            Args = args,
+#if !DEBUG
+            ContentRootPath = "/app"
+#endif
+        });
 
         // Add services to the container.
         builder.Services.AddRazorPages();
@@ -18,6 +25,11 @@ public static class Program
         builder.Services.AddSingleton<WeatherForecastService>();
 
         var app = builder.Build();
+        
+        app.UseForwardedHeaders(new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+        });
 
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
@@ -28,9 +40,7 @@ public static class Program
         }
 
         app.UseHttpsRedirection();
-
         app.UseStaticFiles();
-
         app.UseRouting();
 
         app.MapBlazorHub();
