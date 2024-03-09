@@ -52,16 +52,22 @@
         window.addEventListener("resize", resizeCanvas);
         resizeCanvas();
     };
-    function addResetButton(buttonRef, turnIndRef) {
+
+    function addToTopBar(buttonRef, turnIndRef, perspButRef, plrIndRef) {
         let topRow = document.getElementById('topRow');
         let node = topRow.lastElementChild;
         buttonRef.hidden = false;
         turnIndRef.hidden = false;
+        perspButRef.hidden = false;
+        plrIndRef.hidden = false;
         topRow.insertBefore(buttonRef, node);
-        topRow.insertBefore(turnIndRef, buttonRef);
+        topRow.insertBefore(plrIndRef, buttonRef);
+        topRow.insertBefore(turnIndRef, plrIndRef);
+        topRow.insertBefore(perspButRef, turnIndRef);
     }
-    function updateText(elementRef, text) {
-        elementRef.textContent = text;
+    function updateText(turnElementRef, turnText, playerElementRef, playerText) {
+        turnElementRef.textContent = turnText;
+        playerElementRef.textContent = playerText;
     }
 </script>
 </body>

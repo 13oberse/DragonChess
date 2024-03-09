@@ -45,7 +45,9 @@
 
 <!-- Hidden elements to add to top-row -->
 <button type="button" @ref="resetButtonRef" hidden @onclick="resetButton">Reset</button>
+<button type="button" @ref="perspectiveButtonRef" hidden @onclick="switchPerspective">Change Perspective</button>
 <h3 @ref="turnIndicatorRef" hidden>White's Turn</h3>
+<h5 @ref="playerIndicatorRef" hidden>Player 1 (White)</h5>
 
 <div class="canvasHolder" id="canvasHolder" @ref="divCanvas" @onclick="OnCanvasClick">
     <BECanvas @ref="myCanvas" Height="@canH" Width="@canW"></BECanvas>
@@ -54,7 +56,9 @@
 @code {
     ElementReference divCanvas;
     ElementReference resetButtonRef;
+    ElementReference perspectiveButtonRef;
     ElementReference turnIndicatorRef;
+    ElementReference playerIndicatorRef;
     BECanvasComponent? myCanvas;
     Canvas2DContext? ctx;
     // Constants
@@ -76,8 +80,9 @@
     int PPS = 60; // Pixels per grid square
 
     // Game variables
+    const int MAX_PLAYER_NUM = 3;
     static GameManager gameMgr = new GameManager();
-    static Dragonchess?[] players = new Dragonchess[20];
+    static Dragonchess?[] players = new Dragonchess[MAX_PLAYER_NUM];
 
     List<Position> movePositions = new List<Position>();
     List<Position> remoteCapturePositions = new List<Position>();
@@ -94,21 +99,37 @@
         if (firstRender)
         {
             // Add reset button to top-row div
-            await jsRuntime.InvokeAsync<object>("addResetButton", resetButtonRef, turnIndicatorRef);
+            await jsRuntime.InvokeAsync<object>("addToTopBar", resetButtonRef, turnIndicatorRef, perspectiveButtonRef, playerIndicatorRef);
 
             ctx = await myCanvas.CreateCanvas2DAsync();
             await jsRuntime.InvokeAsync<object>("initRenderJS", DotNetObjectReference.Create(this));
             await base.OnInitializedAsync();
-            if (players[0] is null)
+            int p;
+            for (p = 0; p < MAX_PLAYER_NUM; p++)
             {
-                players[0] = this;
-                //gameMgr.ResetBoard();
+                if (players[p] is null)
+                {
+                    players[p] = this;
+                    break;
+                }
             }
-            else if (players[1] is null)
+            switch (p)
             {
-                players[1] = this;
-                p2Perspective = true;
+                case 0:
+                    //gameMgr.ResetBoard();
+                    break;
+                case 1:
+                    p2Perspective = true;
+                    break;
+                case MAX_PLAYER_NUM:
+                    // error
+                    break;
+                default:
+                    // nothing
+                    break;
             }
+            // Rerender after initialization
+            await ReRenderGrids();
         }
     }
 
@@ -175,7 +196,23 @@
     {
         // Update turn indicator
         string turnText = (gameMgr.GetTurnPlayer() == PlayerColor.White) ? "White's Turn" : "Black's Turn";
-        await jsRuntime.InvokeAsync<object>("updateText", turnIndicatorRef, turnText);
+        int p;
+        for (p = 0; p < players.Length; p++)
+        {
+            if (this.Equals(players[p]))
+            {
+                break;
+            }
+        }
+        string plrIndTxt = p switch
+        {
+            0 => "Player 1 (White)",
+            1 => "Player 2 (Black)",
+            < MAX_PLAYER_NUM => $"Spectator ({p})",
+            _ => "Invalid Player Num. Panic if you see this"
+        };
+        await jsRuntime.InvokeAsync<object>("updateText", turnIndicatorRef, turnText, playerIndicatorRef, plrIndTxt);
+        Console.WriteLine("Player: (" + p + ")");
 
         // Clear the canvas
         ctx = await myCanvas.CreateCanvas2DAsync();
@@ -265,6 +302,13 @@
                 await ReRenderForAll();
             }
         }
+    }
+
+    // Logic for perspective button
+    private async void switchPerspective()
+    {
+        p2Perspective = !p2Perspective;
+        await ReRenderGrids();
     }
 
     // Shifts the underlying array x value to the visual x value of the user's perspective and vice versa
