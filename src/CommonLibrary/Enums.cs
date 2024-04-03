@@ -13,3 +13,9 @@ public enum MoveType : byte
     MoveOnly,
     CaptureOnly
 }
+public enum CheckState : byte
+{
+    None,
+    Check,
+    Checkmate
+}

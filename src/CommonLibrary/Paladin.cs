@@ -43,11 +43,11 @@ public class Paladin : ChessPiece
             CheckMove(board, moves, Position.X - 2, Position.Y - 1, 1, MoveType.MoveCapture);
             CheckMove(board, moves, Position.X - 2, Position.Y + 1, 1, MoveType.MoveCapture);
             CheckMove(board, moves, Position.X - 1, Position.Y - 2, 1, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X - 1, Position.Y - 2, 1, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X - 1, Position.Y + 2, 1, MoveType.MoveCapture);
             CheckMove(board, moves, Position.X + 2, Position.Y - 1, 1, MoveType.MoveCapture);
             CheckMove(board, moves, Position.X + 2, Position.Y + 1, 1, MoveType.MoveCapture);
             CheckMove(board, moves, Position.X + 1, Position.Y - 2, 1, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X + 1, Position.Y - 2, 1, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X + 1, Position.Y + 2, 1, MoveType.MoveCapture);
 
             /* Move in a vertical knight patttern from surface */
             CheckMove(board, moves, Position.X - 2, Position.Y, 0, MoveType.MoveOnly);

@@ -175,7 +175,7 @@ public class GameManager
     }
 
     // Applies the indicated move. Returns true if game over
-    public bool DoMove(ChessPiece piece, int x, int y, int z)
+    public CheckState DoMove(ChessPiece piece, int x, int y, int z)
     {
         if (piece.ValidMoves(board).Contains(new Position(x, y, z)))
         {
@@ -183,11 +183,11 @@ public class GameManager
             ToggleTurnPlayer();
             return MateCheck();
         }
-        return false;
+        return CheckState.None;
     }
 
     // Applies the indicated capture. Returns true if game over
-    public bool DoRemoteCapture(ChessPiece piece, int x, int y, int z)
+    public CheckState DoRemoteCapture(ChessPiece piece, int x, int y, int z)
     {
         if (piece.RemoteCaptures(board).Contains(new Position(x, y, z)))
         {
@@ -195,14 +195,54 @@ public class GameManager
             ToggleTurnPlayer();
             return MateCheck();
         }
-        return false;
+        return CheckState.None;
     }
 
-    // Check for a checkmate
+    // Check to see if turn player is in check/mate
     // TODO: implement
-    private bool MateCheck()
+    private CheckState MateCheck()
     {
-        return false;
+        Position? kingPosition = null;
+        // Find king
+        for (int x=0; x<12; x++)
+        {
+            for (int y=0; y<8; y++)
+            {
+                for (int z=0; z<3; z++)
+                {
+                    ChessPiece? piece = board[x, y, z];
+                    if (piece != null && piece.Owner == turnPlayer &&
+                        piece.GetType().Equals(typeof(King)))
+                    {
+                        kingPosition = new Position(x, y, z);
+                        break;
+                    }
+                }
+                if (kingPosition != null)
+                    break;
+            }
+            if (kingPosition != null)
+                break;
+        }
+        // If no king was found, return
+        if (kingPosition == null)
+            return CheckState.None; // error?
+
+        // Now see if any pieces are threatening the king
+        foreach (ChessPiece? piece in board)
+        {
+            if (piece != null)
+            {
+                // This feels inefficient (checks a lot of cells that aren't the king...)
+                if (piece.ValidMoves(board).Contains(kingPosition) ||
+                    piece.RemoteCaptures(board).Contains(kingPosition))
+                {
+                    // TODO: Could be checkmate
+                    return CheckState.Check;
+                }
+            }
+        }
+        return CheckState.None;
     }
 
     private void ToggleTurnPlayer()

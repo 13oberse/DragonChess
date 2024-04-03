@@ -212,7 +212,6 @@
             _ => "Invalid Player Num. Panic if you see this"
         };
         await jsRuntime.InvokeAsync<object>("updateText", turnIndicatorRef, turnText, playerIndicatorRef, plrIndTxt);
-        Console.WriteLine("Player: (" + p + ")");
 
         // Clear the canvas
         ctx = await myCanvas.CreateCanvas2DAsync();
@@ -431,6 +430,7 @@
 
         if (piece != null && piece.Equals(highlightedPiece))
         {
+            // Clicked the highlighted piece
             // Remove highlighting
             highlightedPiece = null;
             movePositions = new List<Position>();
@@ -440,6 +440,7 @@
         }
         else if (!myTurn || highlightedPiece == null || highlightedPiece.Owner != myColor || !IsHighlighted(x, y, z))
         {
+            // All the conditions when the spot clicked should be highlighted (or there's no piece there)
             if (piece == null)
             {
                 // Remove highlighting
@@ -459,26 +460,41 @@
         }
         else // It's my turn and I've already highlighted one of my pieces and clicked a highlighted spot
         {
-            bool mate = false;
+            CheckState state = CheckState.None;
             // Do the indicated move
             if (remoteCapturePositions.Contains(new Position(x, y, z)))
             {
-                mate = gameMgr.DoRemoteCapture(highlightedPiece, x, y, z);
+                state = gameMgr.DoRemoteCapture(highlightedPiece, x, y, z);
             }
             if (movePositions.Contains(new Position(x, y, z)))
             {
-                mate = gameMgr.DoMove(highlightedPiece, x, y, z);
+                state = gameMgr.DoMove(highlightedPiece, x, y, z);
             }
             // Remove highlighting
             highlightedPiece = null;
             movePositions = new List<Position>();
             remoteCapturePositions = new List<Position>();
 
-            // Change turn indicator if in check/mate?
-
-            if (mate)
+            // Change turn indicator if in check/mate? (TODO: pull into dedicated function?)
+            // TODO: maybe set a global variable for check-state and only do something here with mate?
+            //       just because the turn indicator will be reset upon rerender (but that could change)
+            switch (state)
             {
-                // End of game
+                case CheckState.Check:
+                    Console.WriteLine("Check");
+                    // TODO: check
+                    break;
+
+                case CheckState.Checkmate:
+                    Console.WriteLine("Checkmate");
+                    // TODO: checkmate, end game
+                    break;
+
+                case CheckState.None:
+                default:
+                    Console.WriteLine("None");
+                    // No action needed
+                    break;
             }
 
             // Rerender for all clients, as game state has updated
