@@ -25,7 +25,6 @@ public static class Program
         builder.Services.AddSingleton<WeatherForecastService>();
 
         var app = builder.Build();
-        
         app.UseForwardedHeaders(new ForwardedHeadersOptions
         {
             ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
