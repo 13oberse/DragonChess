@@ -76,23 +76,34 @@ public class Dragon : ChessPiece
         /* Can remotely capture any piece in the 3x3 below it */
         if (Position.Z == 2)
         {
-            /* Loop through 3x3 area below this piece */
-            for (var i = -1; i <= 1; i++)
+            /* Admittedly redundant check to ensure this is a valid space */
+            if (Position.X >= 0 && Position.X < 12 &&
+                Position.Y >= 0 && Position.Y < 8)
             {
-                for (var j = -1; j <= 1; j++)
-                {
-                    /* Ensure this square is on the board */
-                    if (Position.X + i >= 0 && Position.Y + j >= 0 &&
-                        Position.X + i < 12 && Position.Y + j < 8)
-                        /* If there is an enemy piece here, it can be captured */
-                    {
-                        var positionToCheck = board[Position.X + i, Position.Y + j, 1];
-                        if (positionToCheck != null && positionToCheck.Owner != Owner)
-                        {
-                            moves.Add(new Position(Position.X + i, Position.Y + j, 1));
-                        }
-                    }
+                /* Check the square below this piece and the four orthogonally adjacent squares */
+                var positionsToCheck = new List<ChessPiece?>();
+                positionsToCheck.Add(board[Position.X, Position.Y, 1]);
+                if (Position.X+1 < 12) {
+                    positionsToCheck.Add(board[Position.X+1, Position.Y, 1]);
                 }
+                if (Position.X-1 >= 0) {
+                    positionsToCheck.Add(board[Position.X-1, Position.Y, 1]);
+                }
+                if (Position.Y+1 < 8) {
+                    positionsToCheck.Add(board[Position.X, Position.Y+1, 1]);
+                }
+                if (Position.Y-1 >= 0) {
+                    positionsToCheck.Add(board[Position.X, Position.Y-1, 1]);
+                }
+
+                /* Now check all those cells */
+                positionsToCheck.ForEach(delegate(ChessPiece? piece)
+                {
+                    if (piece != null && piece.Owner != Owner)
+                    {
+                        moves.Add(new Position(piece.Position.X, piece.Position.Y, piece.Position.Z));
+                    }
+                });
             }
         }
 
