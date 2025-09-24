@@ -20,15 +20,15 @@ If you're a current player, clicking this button will reset the board to the sta
 This button will flip your perspective as if you walked to the other side of the board, in case you want to view the board from the other perspective. The default view is from the white player's perspective for everyone except the black player.
 
 ## Current features
--Basic game functionality: piece movement, players can move on their turns, etc.
--Game knows whether a player is in check, though it currently doesn't act on this or notify the players (other than through the console)
+- Basic game functionality: piece movement, players can move on their turns, etc.
+- Game knows whether a player is in check, though it currently doesn't act on this or notify the players (other than through the console)
 
 ## Planned/potential features
--Check for checkmate (planned)
--Notify players of check and mate (planned)
--Limit player moves if in check
--Add a way for a spectator to join the game without reseting the board (nice to have, shouldn't be difficult to implement)
--Player-facing log of moves (probably a console that would also let you know of check/mate conditions)
--Picture icons instead of letters for pieces?
--Ability to switch icon sets?
--Animate moves?
+- Check for checkmate (planned)
+- Notify players of check and mate (planned)
+- Limit player moves if in check
+- Add a way for a spectator to join the game without reseting the board (nice to have, shouldn't be difficult to implement)
+- Player-facing log of moves (probably a console that would also let you know of check/mate conditions)
+- Picture icons instead of letters for pieces?
+- Ability to switch icon sets?
+- Animate moves?
