@@ -5,88 +5,88 @@ namespace DragonChess.CommonLibrary;
 
 public abstract class ChessPiece
 {
-    public Position Position { get; set; }
-    public Position LastPosition { get; set; }
+	public Position Position { get; set; }
+	public Position LastPosition { get; set; }
 
-    public PlayerColor Owner { get; set; }
-    
-    public int ImgID { get; set; }
+	public PlayerColor Owner { get; set; }
 
-    protected ChessPiece(PlayerColor color, int x, int y, int z)
-    {
-        Position = new Position(x, y, z);
-        LastPosition = new Position(x, y, z);
-        Owner = color;
-    }
+	public int ImgID { get; set; }
 
-    public abstract List<Position> ValidMoves(ChessPiece?[,,] board);
+	protected ChessPiece(PlayerColor color, int x, int y, int z)
+	{
+		Position = new Position(x, y, z);
+		LastPosition = new Position(x, y, z);
+		Owner = color;
+	}
 
-    public virtual List<Position> RemoteCaptures(ChessPiece?[,,] board) => new();
+	public abstract List<Position> ValidMoves(ChessPiece?[,,] board);
 
-    public virtual void MoveTo(ChessPiece?[,,] board, int x, int y, int z)
-    {
-        // Update the local current and last positions
-        LastPosition.CopyPos(Position);
-        Position.NewPos(x, y, z);
+	public virtual List<Position> RemoteCaptures(ChessPiece?[,,] board) => [];
 
-        // Update the board (note: this currently loses references to any captured pieces)
-        board[Position.X, Position.Y, Position.Z] = this;
-        board[LastPosition.X, LastPosition.Y, LastPosition.Z] = null;
-    }
+	public virtual void MoveTo(ChessPiece?[,,] board, int x, int y, int z)
+	{
+		// Update the local current and last positions
+		LastPosition.CopyPos(Position);
+		Position.NewPos(x, y, z);
 
-    /// <summary>
-    /// Takes a position, and adds it to 'moves' if the position is an empty square or has an enemy piece
-    /// </summary>
-    /// <param name="board"></param>
-    /// <param name="moves"></param>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="z"></param>
-    /// <returns>True if the given position is an empty square</returns>
-    protected bool CheckMove(ChessPiece?[,,] board, List<Position> moves, int x, int y, int z, MoveType moveType)
-    {
-        if (x is < 0 or > 11 || y is < 0 or > 7 || z is < 0 or > 2)
-        {
-            return false;
-        }
+		// Update the board (note: this currently loses references to any captured pieces)
+		board[Position.X, Position.Y, Position.Z] = this;
+		board[LastPosition.X, LastPosition.Y, LastPosition.Z] = null;
+	}
 
-        /* Grab position to check from the board */
-        var positionToCheck = board[x, y, z];
+	/// <summary>
+	/// Takes a position, and adds it to 'moves' if the position is an empty square or has an enemy piece
+	/// </summary>
+	/// <param name="board"></param>
+	/// <param name="moves"></param>
+	/// <param name="x"></param>
+	/// <param name="y"></param>
+	/// <param name="z"></param>
+	/// <returns>True if the given position is an empty square</returns>
+	protected bool CheckMove(ChessPiece?[,,] board, List<Position> moves, int x, int y, int z, MoveType moveType)
+	{
+		if (x is < 0 or > 11 || y is < 0 or > 7 || z is < 0 or > 2)
+		{
+			return false;
+		}
 
-        /* Flag for whether the given position is a valid move */
-        bool validMove = false;
+		/* Grab position to check from the board */
+		var positionToCheck = board[x, y, z];
 
-        /* Set validMove flag depending on moveType */
-        switch (moveType)
-        {
-            case MoveType.MoveOnly:
-                validMove = (positionToCheck == null);
-                break;
-            case MoveType.CaptureOnly:
-                validMove = (positionToCheck != null && positionToCheck.Owner != Owner);
-                break;
-            case MoveType.MoveCapture:
-                validMove = (positionToCheck == null || positionToCheck.Owner != Owner);
-                break;
-        }
+		/* Flag for whether the given position is a valid move */
+		bool validMove = false;
 
-        /* If move is valid, add to moves */
-        if (validMove)
-        {
-            moves.Add(new Position(x, y, z));
-        }
+		/* Set validMove flag depending on moveType */
+		switch (moveType)
+		{
+			case MoveType.MoveOnly:
+				validMove = (positionToCheck == null);
+				break;
+			case MoveType.CaptureOnly:
+				validMove = (positionToCheck != null && positionToCheck.Owner != Owner);
+				break;
+			case MoveType.MoveCapture:
+				validMove = (positionToCheck == null || positionToCheck.Owner != Owner);
+				break;
+		}
 
-        /* return true if position is empty */
-        return positionToCheck == null;
-    }
+		/* If move is valid, add to moves */
+		if (validMove)
+		{
+			moves.Add(new Position(x, y, z));
+		}
 
-    protected bool IsImmobilized(ChessPiece?[,,] board)
-    {
-        if (Position.Z == 0)
-            return false;
-        ChessPiece? piece = board[Position.X, Position.Y, Position.Z - 1];
-        if (piece == null)
-            return false;
-        return piece.GetType().Equals(typeof(Basilisk)) && piece.Owner != Owner;
-    }
+		/* return true if position is empty */
+		return positionToCheck == null;
+	}
+
+	protected bool IsImmobilized(ChessPiece?[,,] board)
+	{
+		if (Position.Z == 0)
+			return false;
+		ChessPiece? piece = board[Position.X, Position.Y, Position.Z - 1];
+		if (piece == null)
+			return false;
+		return piece.GetType().Equals(typeof(Basilisk)) && piece.Owner != Owner;
+	}
 }

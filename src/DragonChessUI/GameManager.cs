@@ -1,13 +1,90 @@
 ﻿using System;
 using System.Collections.Generic;
+using DragonChess.CommonLibrary;
 
-namespace DragonChess.CommonLibrary;
+namespace DragonChessUI;
 
 public class GameManager
 {
-    private static ChessPiece?[,,] board = new ChessPiece[12, 8, 3];
+    private ChessPiece?[,,] board = new ChessPiece[12, 8, 3];
 
-    private static PlayerColor turnPlayer = PlayerColor.White;
+    private PlayerColor turnPlayer = PlayerColor.White;
+
+    private const int MAX_PLAYER_NUM = 20;
+
+    public Guid?[] players = new Guid?[MAX_PLAYER_NUM];
+
+    public EventHandler? UpdateScreens { get; set; }
+
+    // Add a player, returns true only for player 2 (for p2 perspective)
+    public bool AddPlayer(PlayerManager playerMgr)
+    {
+        int i;
+        // Add id to player list at first empty spot (unless it's already in the list)
+        for (i=0; i<MAX_PLAYER_NUM; i++)
+        {
+            if (players[i] == playerMgr.Id)
+            {
+                break;
+            }
+            else if (players[i] == null)
+            {
+                players[i] = playerMgr.Id;
+                playerMgr.Game = this;
+                break;
+            }
+        }
+
+        return (i == 1);
+    }
+
+    public void RemovePlayer(PlayerManager playerMgr)
+    {
+        // Remove id from player list
+        for (int i=0; i<MAX_PLAYER_NUM; i++)
+        {
+            if (players[i] == playerMgr.Id)
+            {
+                players[i] = null;
+                break;
+            }
+        }
+    }
+
+    // Lets the given player take over for an absent player (does nothing if both players are still present)
+    // Returns the new player number of given player (or old player number if it hasn't changed)
+    public int ResetPlayers(PlayerManager playerMgr)
+    {
+        // Find given player in player list
+        int p;
+        for (p=0; p<MAX_PLAYER_NUM; p++)
+        {
+            if (players[p] == playerMgr.Id)
+            {
+                break;
+            }
+        }
+
+        // Only continue if player was found
+        if (p < MAX_PLAYER_NUM)
+        {
+            // Replace first null player with given player
+            if (players[0] == null)
+            {
+                players[0] = playerMgr.Id;
+                players[p] = null;
+                return 0;
+            }
+            else if (players[1] == null)
+            {
+                players[1] = playerMgr.Id;
+                players[p] = null;
+                return 1;
+            }
+        }
+        return p;
+    }
+
 
     public ChessPiece? GetPiece(int x, int y, int z)
     {
@@ -199,7 +276,7 @@ public class GameManager
     }
 
     // Check to see if turn player is in check/mate
-    // TODO: implement
+    // TODO: finish implementation
     private CheckState MateCheck()
     {
         Position? kingPosition = null;

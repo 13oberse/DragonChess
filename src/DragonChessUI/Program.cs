@@ -23,6 +23,7 @@ public static class Program
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
         builder.Services.AddSingleton<WeatherForecastService>();
+        builder.Services.AddPlayerManager();
 
         var app = builder.Build();
         app.UseForwardedHeaders(new ForwardedHeadersOptions

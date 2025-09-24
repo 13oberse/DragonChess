@@ -4,7 +4,11 @@
 @using Blazor.Extensions.Canvas.Canvas2D
 @using Newtonsoft.Json.Linq
 @using Newtonsoft.Json
+@using Microsoft.AspNetCore.Components.Server.Circuits;
+@using System.Threading;
+@implements IDisposable
 @inject IJSRuntime jsRuntime
+@inject PlayerManager PlayerManager
 
 <PageTitle>Dragonchess</PageTitle>
 
@@ -82,8 +86,6 @@
     // Game variables
     const int MAX_PLAYER_NUM = 20;
     static GameManager gameMgr = new GameManager();
-    static Dragonchess?[] players = new Dragonchess[MAX_PLAYER_NUM];
-
     List<Position> movePositions = new List<Position>();
     List<Position> remoteCapturePositions = new List<Position>();
     ChessPiece? highlightedPiece = null;
@@ -93,6 +95,18 @@
     ElementReference image1;
     ElementReference[] blackPieces = new ElementReference[15];
     ElementReference[] whitePieces = new ElementReference[15];
+
+    // Subscribe to UpdateScreens event
+    protected override void OnInitialized()
+    {
+        gameMgr.UpdateScreens += ReRenderEvent;
+    }
+
+    // Unsubscribe from UpdateScreens event
+    public void Dispose()
+    {
+        gameMgr.UpdateScreens -= ReRenderEvent;
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -104,30 +118,8 @@
             ctx = await myCanvas.CreateCanvas2DAsync();
             await jsRuntime.InvokeAsync<object>("initRenderJS", DotNetObjectReference.Create(this));
             await base.OnInitializedAsync();
-            int p;
-            for (p = 0; p < MAX_PLAYER_NUM; p++)
-            {
-                if (players[p] is null)
-                {
-                    players[p] = this;
-                    break;
-                }
-            }
-            switch (p)
-            {
-                case 0:
-                    //gameMgr.ResetBoard();
-                    break;
-                case 1:
-                    p2Perspective = true;
-                    break;
-                case MAX_PLAYER_NUM:
-                    // error
-                    break;
-                default:
-                    // nothing
-                    break;
-            }
+            p2Perspective = gameMgr.AddPlayer(PlayerManager);
+
             // Rerender after initialization
             await ReRenderGrids();
         }
@@ -173,22 +165,10 @@
         await ReRenderGrids();
     }
 
-    public async Task ReRenderForAll()
+    // Handles a rerender event (this will happen for every instance)
+    public async void ReRenderEvent(object? sender, EventArgs e)
     {
-        for (int i=0; i<players.Length; i++)
-        {
-            if (players[i] != null)
-            {
-                try
-                {
-                    await players[i]!.ReRenderGrids();
-                }
-                catch
-                {
-                    players[i] = null;
-                }
-            }
-        }
+        await ReRenderGrids();
     }
 
     // Re renders the grid canvas
@@ -197,9 +177,9 @@
         // Update turn indicator
         string turnText = (gameMgr.GetTurnPlayer() == PlayerColor.White) ? "White's Turn" : "Black's Turn";
         int p;
-        for (p = 0; p < players.Length; p++)
+        for (p = 0; p < gameMgr.players.Length; p++)
         {
-            if (this.Equals(players[p]))
+            if (PlayerManager.Id == gameMgr.players[p])
             {
                 break;
             }
@@ -272,12 +252,12 @@
     }
 
     // Logic for reset button
-    private async void resetButton()
+    private void resetButton()
     {
         int playerNum = -1;
-        for (int i = 0; i < players.Length; i++)
+        for (int i = 0; i < gameMgr.players.Length; i++)
         {
-            if (this.Equals(players[i]))
+            if (PlayerManager.Id == gameMgr.players[i])
             {
                 playerNum = i;
                 break;
@@ -286,19 +266,20 @@
         if (playerNum == 0 || playerNum == 1)
         {
             gameMgr.ResetBoard();
-            await ReRenderForAll();
+            gameMgr.UpdateScreens?.Invoke(this, EventArgs.Empty);
         }
         else if (playerNum >= 2)
         {
-            // Rerender to update player list
-            await ReRenderForAll();
-            if (players[0] == null && players[1] == null)
+            // Attempt to reset players (update playerNum if it works)
+            playerNum = gameMgr.ResetPlayers(PlayerManager);
+            if (playerNum < 2)
             {
-                // if both players are gone, become player 1
-                players[playerNum] = null;
-                players[0] = this;
+                // A player has changed, reset the board (go to p2 perspective if p2)
+                if (playerNum == 1) {
+                    p2Perspective = true;
+                }
                 gameMgr.ResetBoard();
-                await ReRenderForAll();
+                gameMgr.UpdateScreens?.Invoke(this, EventArgs.Empty);
             }
         }
     }
@@ -425,8 +406,8 @@
         //ctx = await hiddenCanvas.CreateCanvas2DAsync(); // if necessary
         ChessPiece? piece = gameMgr.GetPiece(x, y, z);
         PlayerColor turnPlayer = gameMgr.GetTurnPlayer();
-        bool myTurn = this.Equals(players[(int)turnPlayer]);
-        PlayerColor myColor = this.Equals(players[0]) ? PlayerColor.White : PlayerColor.Black;
+        bool myTurn = (PlayerManager.Id == gameMgr.players[(int)turnPlayer]);
+        PlayerColor myColor = (PlayerManager.Id == gameMgr.players[0]) ? PlayerColor.White : PlayerColor.Black;
 
         if (piece != null && piece.Equals(highlightedPiece))
         {
@@ -498,7 +479,7 @@
             }
 
             // Rerender for all clients, as game state has updated
-            await ReRenderForAll();
+            gameMgr.UpdateScreens?.Invoke(this, EventArgs.Empty);
         }
         //Console.WriteLine("Clicked here: (" + x + ", " + y + ", " + z + ")");
     }
