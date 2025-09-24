@@ -10,6 +10,8 @@ If it's your turn, clicking a cell highlighted in yellow will move the selected 
 
 Regardless of turn, clicking the selected piece again (or clicking any non-highlighted cell) will de-select that piece.
 
+If you highlight a piece and it unexpectedly can't move anywhere, check the space directly below it; the Basilisk piece can freeze enemy pieces that are directly above it (preventing them from being able to move or capture).
+
 ## Spectators
 If more than two people attempt to connect to the game, everyone beyond the first two will connect as spectators. This just means they can watch the game without any control over it.
 
