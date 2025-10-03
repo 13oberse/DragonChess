@@ -23,38 +23,7 @@ public class Oliphant : ChessPiece
         }
 
         /* Can move and capture like a chess rook */
-        /* Loop through each direction until a piece (or the edge of the board) blocks movement */
-        /* Negative horizontal direction */
-        for (var i = 1; i < 12; i++)
-        {
-            /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X - i, Position.Y, 1, MoveType.MoveCapture))
-                break;
-        }
-
-        /* Positive horizontal direction */
-        for (var i = 1; i < 12; i++)
-        {
-            /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X + i, Position.Y, 1, MoveType.MoveCapture))
-                break;
-        }
-
-        /* Negative vertical direction */
-        for (var i = 1; i < 8; i++)
-        {
-            /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X, Position.Y - i, 1, MoveType.MoveCapture))
-                break;
-        }
-
-        /* Positive vertical direction */
-        for (var i = 1; i < 8; i++)
-        {
-            /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X, Position.Y + i, 1, MoveType.MoveCapture))
-                break;
-        }
+        moves.AddRange(GetRookMoves(board));
 
         return moves;
     }

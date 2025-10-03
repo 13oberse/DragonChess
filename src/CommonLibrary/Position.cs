@@ -46,6 +46,6 @@ public class Position
 
     public override int GetHashCode()
     {
-        throw new NotImplementedException();
+        return ( ((byte)X<<16) | ((byte)Y<<8) | (byte)Z );
     }
 }

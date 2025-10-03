@@ -23,34 +23,7 @@ public class Thief : ChessPiece
         }
 
         /* Can move and capture as a chess bishop */
-        /* Loop through all valid distances for each direction */
-        for (var i = 1; i < 8; i++) // -x, -y direction
-        {
-            /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X - i, Position.Y - i, 1, MoveType.MoveCapture))
-                break;
-        }
-
-        for (var i = 1; i < 8; i++) // -x, +y direction
-        {
-            /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X - i, Position.Y + i, 1, MoveType.MoveCapture))
-                break;
-        }
-
-        for (var i = 1; i < 8; i++) // +x, -y direction
-        {
-            /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X + i, Position.Y - i, 1, MoveType.MoveCapture))
-                break;
-        }
-
-        for (var i = 1; i < 8; i++) // +x, -y direction
-        {
-            /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X + i, Position.Y + i, 1, MoveType.MoveCapture))
-                break;
-        }
+        moves.AddRange(GetBishopMoves(board));
 
         return moves;
     }

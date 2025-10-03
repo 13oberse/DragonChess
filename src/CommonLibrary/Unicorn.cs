@@ -22,14 +22,7 @@ public class Unicorn : ChessPiece
         }
 
         /* Can move/capture like a chess knight */
-        CheckMove(board, moves, Position.X - 1, Position.Y - 2, 1, MoveType.MoveCapture);
-        CheckMove(board, moves, Position.X - 2, Position.Y - 1, 1, MoveType.MoveCapture);
-        CheckMove(board, moves, Position.X - 1, Position.Y + 2, 1, MoveType.MoveCapture);
-        CheckMove(board, moves, Position.X - 2, Position.Y + 1, 1, MoveType.MoveCapture);
-        CheckMove(board, moves, Position.X + 1, Position.Y - 2, 1, MoveType.MoveCapture);
-        CheckMove(board, moves, Position.X + 2, Position.Y - 1, 1, MoveType.MoveCapture);
-        CheckMove(board, moves, Position.X + 1, Position.Y + 2, 1, MoveType.MoveCapture);
-        CheckMove(board, moves, Position.X + 2, Position.Y + 1, 1, MoveType.MoveCapture);
+        moves.AddRange(GetJumpMoves(board, 1, 2));
 
         return moves;
     }

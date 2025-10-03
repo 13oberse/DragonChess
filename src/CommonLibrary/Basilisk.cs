@@ -32,7 +32,7 @@ public class Basilisk : ChessPiece
         {
             /* Can move or capture one step straight or diagonally forward */
             CheckMove(board, moves, Position.X - 1, nextYLine, 0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X, nextYLine, 0, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X,     nextYLine, 0, MoveType.MoveCapture);
             CheckMove(board, moves, Position.X + 1, nextYLine, 0, MoveType.MoveCapture);
         }
 

@@ -26,16 +26,7 @@ public class King : ChessPiece
         if (Position.Z == 1)
         {
             /* Can move/capture like a chess king */
-            CheckMove(board, moves, Position.X + 1, Position.Y + 1, 1, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X + 1, Position.Y, 1, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X + 1, Position.Y - 1, 1, MoveType.MoveCapture);
-
-            CheckMove(board, moves, Position.X, Position.Y + 1, 1, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X, Position.Y - 1, 1, MoveType.MoveCapture);
-
-            CheckMove(board, moves, Position.X - 1, Position.Y + 1, 1, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X - 1, Position.Y, 1, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X - 1, Position.Y - 1, 1, MoveType.MoveCapture);
+            moves.AddRange(GetKingMoves(board));
 
             /* Can move/capture directly up or down */
             CheckMove(board, moves, Position.X, Position.Y, 0, MoveType.MoveCapture);

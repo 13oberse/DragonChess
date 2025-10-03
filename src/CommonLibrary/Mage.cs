@@ -33,76 +33,17 @@ public class Mage : ChessPiece
 
         if (Position.Z == 1)
         {
-            /* Can move/capture like a chess queen */
-            /* Loop through each direction until a piece (or the edge of the board) blocks movement */
-            /* Negative horizontal direction */
-            for (var i = 1; i < 12; i++)
-            {
-                /* If there's a piece there, break out of loop */
-                if (!CheckMove(board, moves, Position.X - i, Position.Y, 1, MoveType.MoveCapture))
-                    break;
-            }
-
-            /* Positive horizontal direction */
-            for (var i = 1; i < 12; i++)
-            {
-                /* If there's a piece there, break out of loop */
-                if (!CheckMove(board, moves, Position.X + i, Position.Y, 1, MoveType.MoveCapture))
-                    break;
-            }
-
-            /* Negative vertical direction */
-            for (var i = 1; i < 8; i++)
-            {
-                /* If there's a piece there, break out of loop */
-                if (!CheckMove(board, moves, Position.X, Position.Y - i, 1, MoveType.MoveCapture))
-                    break;
-            }
-
-            /* Positive vertical direction */
-            for (var i = 1; i < 8; i++)
-            {
-                /* If there's a piece there, break out of loop */
-                if (!CheckMove(board, moves, Position.X, Position.Y + i, 1, MoveType.MoveCapture))
-                    break;
-            }
-
-            /* Diagonals */
-            for (var i = 1; i < 8; i++) // -x, -y direction
-            {
-                /* If there's a piece there, break out of loop */
-                if (!CheckMove(board, moves, Position.X - i, Position.Y - i, 1, MoveType.MoveCapture))
-                    break;
-            }
-
-            for (var i = 1; i < 8; i++) // -x, +y direction
-            {
-                /* If there's a piece there, break out of loop */
-                if (!CheckMove(board, moves, Position.X - i, Position.Y + i, 1, MoveType.MoveCapture))
-                    break;
-            }
-
-            for (var i = 1; i < 8; i++) // +x, -y direction
-            {
-                /* If there's a piece there, break out of loop */
-                if (!CheckMove(board, moves, Position.X + i, Position.Y - i, 1, MoveType.MoveCapture))
-                    break;
-            }
-
-            for (var i = 1; i < 8; i++) // +x, -y direction
-            {
-                /* If there's a piece there, break out of loop */
-                if (!CheckMove(board, moves, Position.X + i, Position.Y + i, 1, MoveType.MoveCapture))
-                    break;
-            }
+            /* Can move/capture like a chess queen (which is just rook and bishop) */
+            moves.AddRange(GetRookMoves(board));
+            moves.AddRange(GetBishopMoves(board)); /* Shouldn't overlap with rook moves, so no need to exclude here */
         }
         else /* z is not 1 (so 0 or 2) */
         {
             /* Can move one step orthogonally */
-            CheckMove(board, moves, Position.X + 1, Position.Y, Position.Z, MoveType.MoveOnly);
-            CheckMove(board, moves, Position.X - 1, Position.Y, Position.Z, MoveType.MoveOnly);
-            CheckMove(board, moves, Position.X, Position.Y + 1, Position.Z, MoveType.MoveOnly);
-            CheckMove(board, moves, Position.X, Position.Y - 1, Position.Z, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X + 1, Position.Y,     Position.Z, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X - 1, Position.Y,     Position.Z, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X,     Position.Y + 1, Position.Z, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X,     Position.Y - 1, Position.Z, MoveType.MoveOnly);
         }
 
         return moves;

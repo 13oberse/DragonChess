@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DragonChess.CommonLibrary;
 
@@ -26,41 +27,10 @@ public class Dragon : ChessPiece
         }
 
         /* Can move and capture as a chess bishop */
-        /* Loop through all valid distances for each direction */
-        for (var i = 1; i < 8; i++) // -x, -y direction
-        {
-            /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X - i, Position.Y - i, 2, MoveType.MoveCapture))
-                break;
-        }
+        moves.AddRange(GetBishopMoves(board));
 
-        for (var i = 1; i < 8; i++) // -x, +y direction
-        {
-            /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X - i, Position.Y + i, 2, MoveType.MoveCapture))
-                break;
-        }
-
-        for (var i = 1; i < 8; i++) // +x, -y direction
-        {
-            /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X + i, Position.Y - i, 2, MoveType.MoveCapture))
-                break;
-        }
-
-        for (var i = 1; i < 8; i++) // +x, -y direction
-        {
-            /* If there's a piece there, break out of loop */
-            if (!CheckMove(board, moves, Position.X + i, Position.Y + i, 2, MoveType.MoveCapture))
-                break;
-        }
-
-        /* Can also move and capture as a chess king */
-        /* Since diagonals are covered above, only orthogonal spaces need checked */
-        CheckMove(board, moves, Position.X - 1, Position.Y, 2, MoveType.MoveCapture);
-        CheckMove(board, moves, Position.X + 1, Position.Y, 2, MoveType.MoveCapture);
-        CheckMove(board, moves, Position.X, Position.Y - 1, 2, MoveType.MoveCapture);
-        CheckMove(board, moves, Position.X, Position.Y + 1, 2, MoveType.MoveCapture);
+        /* Can also move and capture as a chess king (don't add duplicate positions to list) */
+        moves.AddRange(GetKingMoves(board).Except(moves));
 
         return moves;
     }

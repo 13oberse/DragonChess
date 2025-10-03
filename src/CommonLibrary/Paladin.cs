@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DragonChess.CommonLibrary;
 
@@ -26,65 +27,41 @@ public class Paladin : ChessPiece
         }
 
         /* Can move/capture like a chess king */
-        CheckMove(board, moves, Position.X - 1, Position.Y - 1, Position.Z, MoveType.MoveCapture);
-        CheckMove(board, moves, Position.X - 1, Position.Y, Position.Z, MoveType.MoveCapture);
-        CheckMove(board, moves, Position.X - 1, Position.Y + 1, Position.Z, MoveType.MoveCapture);
-
-        CheckMove(board, moves, Position.X, Position.Y - 1, Position.Z, MoveType.MoveCapture);
-        CheckMove(board, moves, Position.X, Position.Y + 1, Position.Z, MoveType.MoveCapture);
-
-        CheckMove(board, moves, Position.X + 1, Position.Y - 1, Position.Z, MoveType.MoveCapture);
-        CheckMove(board, moves, Position.X + 1, Position.Y, Position.Z, MoveType.MoveCapture);
-        CheckMove(board, moves, Position.X + 1, Position.Y + 1, Position.Z, MoveType.MoveCapture);
+        moves.AddRange(GetKingMoves(board));
 
         if (Position.Z == 1)
         {
             /* Can move/capture like a chess knight */
-            CheckMove(board, moves, Position.X - 2, Position.Y - 1, 1, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X - 2, Position.Y + 1, 1, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X - 1, Position.Y - 2, 1, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X - 1, Position.Y + 2, 1, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X + 2, Position.Y - 1, 1, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X + 2, Position.Y + 1, 1, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X + 1, Position.Y - 2, 1, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X + 1, Position.Y + 2, 1, MoveType.MoveCapture);
+            moves.AddRange(GetJumpMoves(board, 1, 2).Except(moves));
 
             /* Move in a vertical knight patttern from surface */
-            CheckMove(board, moves, Position.X - 2, Position.Y, 0, MoveType.MoveOnly);
-            CheckMove(board, moves, Position.X + 2, Position.Y, 0, MoveType.MoveOnly);
-            CheckMove(board, moves, Position.X, Position.Y - 2, 0, MoveType.MoveOnly);
-            CheckMove(board, moves, Position.X, Position.Y + 2, 0, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X - 2, Position.Y,     0, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X + 2, Position.Y,     0, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X,     Position.Y - 2, 0, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X,     Position.Y + 2, 0, MoveType.MoveOnly);
 
-            CheckMove(board, moves, Position.X - 2, Position.Y, 2, MoveType.MoveOnly);
-            CheckMove(board, moves, Position.X + 2, Position.Y, 2, MoveType.MoveOnly);
-            CheckMove(board, moves, Position.X, Position.Y - 2, 2, MoveType.MoveOnly);
-            CheckMove(board, moves, Position.X, Position.Y + 2, 2, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X - 2, Position.Y,     2, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X + 2, Position.Y,     2, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X,     Position.Y - 2, 2, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X,     Position.Y + 2, 2, MoveType.MoveOnly);
         }
         else /* Z is not 1 (so 0 or 2) */
         {
             /* If not on surface (z=1), can move in vertical knight pattern to surface */
-            CheckMove(board, moves, Position.X - 2, Position.Y, 1, MoveType.MoveOnly);
-            CheckMove(board, moves, Position.X + 2, Position.Y, 1, MoveType.MoveOnly);
-            CheckMove(board, moves, Position.X, Position.Y - 2, 1, MoveType.MoveOnly);
-            CheckMove(board, moves, Position.X, Position.Y + 2, 1, MoveType.MoveOnly);
-        }
+            CheckMove(board, moves, Position.X - 2, Position.Y,     1, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X + 2, Position.Y,     1, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X,     Position.Y - 2, 1, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X,     Position.Y + 2, 1, MoveType.MoveOnly);
 
-        /* Can move in vertical knight pattern, only cases not covered yet are jumping between z=0 and 2 */
-        if (Position.Z == 0)
-        {
-            /* Can move in vertical knight pattern from underground to sky */
-            CheckMove(board, moves, Position.X - 1, Position.Y, 2, MoveType.MoveOnly);
-            CheckMove(board, moves, Position.X + 1, Position.Y, 2, MoveType.MoveOnly);
-            CheckMove(board, moves, Position.X, Position.Y - 1, 2, MoveType.MoveOnly);
-            CheckMove(board, moves, Position.X, Position.Y + 1, 2, MoveType.MoveOnly);
-        }
-        if (Position.Z == 2)
-        {
-            /* Can move in vertical knight pattern from sky to underground */
-            CheckMove(board, moves, Position.X - 1, Position.Y, 0, MoveType.MoveOnly);
-            CheckMove(board, moves, Position.X + 1, Position.Y, 0, MoveType.MoveOnly);
-            CheckMove(board, moves, Position.X, Position.Y - 1, 0, MoveType.MoveOnly);
-            CheckMove(board, moves, Position.X, Position.Y + 1, 0, MoveType.MoveOnly);
+            /* Can move in vertical knight pattern, only cases not covered yet are jumping between z=0 and 2 */
+            /* Get Z position opposite the Paladin's current Z */
+            var oppositeZ = (Position.Z == 0) ? 2 : 0;
+
+            /* Can move in vertical knight pattern between underground and sky */
+            CheckMove(board, moves, Position.X - 1, Position.Y,     oppositeZ, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X + 1, Position.Y,     oppositeZ, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X,     Position.Y - 1, oppositeZ, MoveType.MoveOnly);
+            CheckMove(board, moves, Position.X,     Position.Y + 1, oppositeZ, MoveType.MoveOnly);
         }
 
         return moves;

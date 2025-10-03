@@ -29,14 +29,14 @@ public class Elemental : ChessPiece
         {
             /* Can move/capture one or two steps orthogonally */
             /* NOTE: Gygax was unclear, I'm assuming it can jump over an intermediate piece here */
-            CheckMove(board, moves, Position.X - 2, Position.Y, 0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X - 1, Position.Y, 0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X + 1, Position.Y, 0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X + 2, Position.Y, 0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X, Position.Y - 2, 0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X, Position.Y - 1, 0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X, Position.Y + 1, 0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X, Position.Y + 2, 0, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X - 2, Position.Y,     0, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X - 1, Position.Y,     0, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X + 1, Position.Y,     0, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X + 2, Position.Y,     0, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X,     Position.Y - 2, 0, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X,     Position.Y - 1, 0, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X,     Position.Y + 1, 0, MoveType.MoveCapture);
+            CheckMove(board, moves, Position.X,     Position.Y + 2, 0, MoveType.MoveCapture);
 
             /* Can move one step diagonally */
             CheckMove(board, moves, Position.X + 1, Position.Y + 1, 0, MoveType.MoveOnly);
