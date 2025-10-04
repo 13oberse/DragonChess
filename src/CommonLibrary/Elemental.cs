@@ -28,15 +28,24 @@ public class Elemental : ChessPiece
         if (Position.Z == 0)
         {
             /* Can move/capture one or two steps orthogonally */
-            /* NOTE: Gygax was unclear, I'm assuming it can jump over an intermediate piece here */
-            CheckMove(board, moves, Position.X - 2, Position.Y,     0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X - 1, Position.Y,     0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X + 1, Position.Y,     0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X + 2, Position.Y,     0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X,     Position.Y - 2, 0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X,     Position.Y - 1, 0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X,     Position.Y + 1, 0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X,     Position.Y + 2, 0, MoveType.MoveCapture);
+            /* NOTE: Gygax was unclear, but we're gonna say all the elemental's multi-step moves are blockable */
+            if (CheckMove(board, moves, Position.X - 1, Position.Y,     0, MoveType.MoveCapture))
+            {
+                CheckMove(board, moves, Position.X - 2, Position.Y,     0, MoveType.MoveCapture);
+            }
+            if (CheckMove(board, moves, Position.X + 1, Position.Y,     0, MoveType.MoveCapture))
+            {
+                CheckMove(board, moves, Position.X + 2, Position.Y,     0, MoveType.MoveCapture);
+            }
+            if (CheckMove(board, moves, Position.X,     Position.Y - 1, 0, MoveType.MoveCapture))
+            {
+                CheckMove(board, moves, Position.X,     Position.Y - 2, 0, MoveType.MoveCapture);
+            }
+            if (CheckMove(board, moves, Position.X,     Position.Y + 1, 0, MoveType.MoveCapture))
+            {
+                CheckMove(board, moves, Position.X,     Position.Y + 2, 0, MoveType.MoveCapture);
+            }
+
 
             /* Can move one step diagonally */
             CheckMove(board, moves, Position.X + 1, Position.Y + 1, 0, MoveType.MoveOnly);
@@ -44,20 +53,26 @@ public class Elemental : ChessPiece
             CheckMove(board, moves, Position.X - 1, Position.Y + 1, 0, MoveType.MoveOnly);
             CheckMove(board, moves, Position.X - 1, Position.Y - 1, 0, MoveType.MoveOnly);
 
-            /* Can capture the surface (z=1) squares orthogonal to the square directly above (an upwards diagonal) */
-            CheckMove(board, moves, Position.X + 1, Position.Y + 1, 1, MoveType.CaptureOnly);
-            CheckMove(board, moves, Position.X + 1, Position.Y - 1, 1, MoveType.CaptureOnly);
-            CheckMove(board, moves, Position.X - 1, Position.Y + 1, 1, MoveType.CaptureOnly);
-            CheckMove(board, moves, Position.X - 1, Position.Y - 1, 1, MoveType.CaptureOnly);
+            /* Can capture the surface (z=1) squares orthogonal to the square directly above (an upwards diagonal), but this can be blocked by a piece directly above */
+            if (board[Position.X, Position.Y, Position.Z+1] == null)
+            {
+                CheckMove(board, moves, Position.X + 1, Position.Y + 1, 1, MoveType.CaptureOnly);
+                CheckMove(board, moves, Position.X + 1, Position.Y - 1, 1, MoveType.CaptureOnly);
+                CheckMove(board, moves, Position.X - 1, Position.Y + 1, 1, MoveType.CaptureOnly);
+                CheckMove(board, moves, Position.X - 1, Position.Y - 1, 1, MoveType.CaptureOnly);
+            }
         }
 
         if (Position.Z == 1)
         {
-            /* can move/capture squares orthogonally adjacent to the square directly below underground (z=0) */
-            CheckMove(board, moves, Position.X + 1, Position.Y + 1, 0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X + 1, Position.Y - 1, 0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X - 1, Position.Y + 1, 0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X - 1, Position.Y - 1, 0, MoveType.MoveCapture);
+            /* can move/capture squares orthogonally adjacent to the square directly below underground (z=0), but this can be blocked by a piece directly below */
+            if (board[Position.X, Position.Y, Position.Z-1] == null)
+            {
+                CheckMove(board, moves, Position.X + 1, Position.Y,     0, MoveType.MoveCapture);
+                CheckMove(board, moves, Position.X - 1, Position.Y,     0, MoveType.MoveCapture);
+                CheckMove(board, moves, Position.X,     Position.Y + 1, 0, MoveType.MoveCapture);
+                CheckMove(board, moves, Position.X,     Position.Y - 1, 0, MoveType.MoveCapture);
+            }
         }
 
         return moves;

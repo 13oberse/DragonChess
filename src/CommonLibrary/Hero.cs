@@ -35,23 +35,18 @@ public class Hero : ChessPiece
             CheckMove(board, moves, Position.X - 2, Position.Y + 2, 1, MoveType.MoveCapture);
             CheckMove(board, moves, Position.X + 2, Position.Y - 2, 1, MoveType.MoveCapture);
             CheckMove(board, moves, Position.X - 2, Position.Y - 2, 1, MoveType.MoveCapture);
-
-            /* Can move/capture one step triagonally to levels 1 or 3 */
-            CheckMove(board, moves, Position.X - 1, Position.Y - 1, 0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X - 1, Position.Y + 1, 0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X + 1, Position.Y - 1, 0, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X + 1, Position.Y + 1, 0, MoveType.MoveCapture);
-
-            CheckMove(board, moves, Position.X - 1, Position.Y - 1, 2, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X - 1, Position.Y + 1, 2, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X + 1, Position.Y - 1, 2, MoveType.MoveCapture);
-            CheckMove(board, moves, Position.X + 1, Position.Y + 1, 2, MoveType.MoveCapture);
         }
-        else /* Z is not 1 (so 0 or 2) */
-        {
-            /* Can move/capture back to the square on level 2 the Hero previously left */
-            CheckMove(board, moves, LastPosition.X, LastPosition.Y, LastPosition.Z, MoveType.MoveCapture);
-        }
+
+        /* Can move/capture one step triagonally up or down (regardless of current level) */
+        CheckMove(board, moves, Position.X - 1, Position.Y - 1, Position.Z + 1, MoveType.MoveCapture);
+        CheckMove(board, moves, Position.X - 1, Position.Y + 1, Position.Z + 1, MoveType.MoveCapture);
+        CheckMove(board, moves, Position.X + 1, Position.Y - 1, Position.Z + 1, MoveType.MoveCapture);
+        CheckMove(board, moves, Position.X + 1, Position.Y + 1, Position.Z + 1, MoveType.MoveCapture);
+
+        CheckMove(board, moves, Position.X - 1, Position.Y - 1, Position.Z - 1, MoveType.MoveCapture);
+        CheckMove(board, moves, Position.X - 1, Position.Y + 1, Position.Z - 1, MoveType.MoveCapture);
+        CheckMove(board, moves, Position.X + 1, Position.Y - 1, Position.Z - 1, MoveType.MoveCapture);
+        CheckMove(board, moves, Position.X + 1, Position.Y + 1, Position.Z - 1, MoveType.MoveCapture);
 
         return moves;
     }

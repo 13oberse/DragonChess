@@ -49,7 +49,7 @@ public class Warrior : ChessPiece
             ChessPiece HeroPromotion = new Hero(Owner, x, y, z);
 
             /* Update Hero's LastPosition */
-            HeroPromotion.LastPosition.CopyPos(Position);
+            //HeroPromotion.LastPosition.CopyPos(Position);
 
             /* Update the board (note: this makes a new reference to Hero, and abandons this Warrior instance) */
             board[x, y, z] = HeroPromotion;
@@ -57,13 +57,16 @@ public class Warrior : ChessPiece
         }
         else
         {
-            // Update the local current and last positions
-            LastPosition.CopyPos(Position);
+            // Remove self from previous position
+            board[Position.X, Position.Y, Position.Z] = null;
+
+            // Update the local position
+            //LastPosition.CopyPos(Position);
             Position.NewPos(x, y, z);
 
-            // Update the board (note: this currently loses references to any captured pieces)
+            // Update the board (note: this currently just drops references to any captured pieces)
             board[Position.X, Position.Y, Position.Z] = this;
-            board[LastPosition.X, LastPosition.Y, LastPosition.Z] = null;
+            //board[LastPosition.X, LastPosition.Y, LastPosition.Z] = null;
         }
     }
 }

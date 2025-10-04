@@ -6,7 +6,7 @@ namespace DragonChess.CommonLibrary;
 public abstract class ChessPiece
 {
 	public Position Position { get; set; }
-	public Position LastPosition { get; set; }
+	//public Position LastPosition { get; set; }
 
 	public PlayerColor Owner { get; set; }
 
@@ -15,7 +15,7 @@ public abstract class ChessPiece
 	protected ChessPiece(PlayerColor color, int x, int y, int z)
 	{
 		Position = new Position(x, y, z);
-		LastPosition = new Position(x, y, z);
+		//LastPosition = new Position(x, y, z);
 		Owner = color;
 	}
 
@@ -25,13 +25,16 @@ public abstract class ChessPiece
 
 	public virtual void MoveTo(ChessPiece?[,,] board, int x, int y, int z)
 	{
-		// Update the local current and last positions
-		LastPosition.CopyPos(Position);
+		// Remove self from previous position
+		board[Position.X, Position.Y, Position.Z] = null;
+
+		// Update the local position
+		//LastPosition.CopyPos(Position);
 		Position.NewPos(x, y, z);
 
-		// Update the board (note: this currently loses references to any captured pieces)
+		// Update the board (note: this currently just drops references to any captured pieces)
 		board[Position.X, Position.Y, Position.Z] = this;
-		board[LastPosition.X, LastPosition.Y, LastPosition.Z] = null;
+		//board[LastPosition.X, LastPosition.Y, LastPosition.Z] = null;
 	}
 
 	/// <summary>
